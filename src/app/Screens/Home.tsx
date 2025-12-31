@@ -1,5 +1,5 @@
-import PokeCard from "../components/pokeCard";
 import { Ionicons } from "@expo/vector-icons";
+import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
 import React, { useState } from "react";
 import {
 	ActivityIndicator,
@@ -10,7 +10,7 @@ import {
 	TextInput,
 	View,
 } from "react-native";
-import { MaterialDesignIcons } from '@react-native-vector-icons/material-design-icons';
+import PokeCard from "../../components/pokeCard";
 
 const Home = ({
 	pokemons,
@@ -21,7 +21,7 @@ const Home = ({
 }: any) => {
 	const [searchQuery, setSearchQuery] = useState("");
 
-	const filteredPokemons = pokemons.filter((pokemon : any) =>
+	const filteredPokemons = pokemons.filter((pokemon: any) =>
 		pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
 
@@ -30,10 +30,15 @@ const Home = ({
 			{/* Header Section */}
 			<View style={styles.headerContainer}>
 				<View style={styles.titleSection}>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
-					<Text style={styles.titleText}>Pokédex</Text>
-          <MaterialDesignIcons name="pokeball" color="#ff0000" size={40} style={{marginTop: 5}}/>
-          </View>
+					<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+						<Text style={styles.titleText}>Pokédex</Text>
+						<MaterialDesignIcons
+							name="pokeball"
+							color="#ff0000"
+							size={40}
+							style={{ marginTop: 5 }}
+						/>
+					</View>
 					<Text style={styles.subtitleText}>Catch 'em all!</Text>
 				</View>
 			</View>
@@ -47,7 +52,7 @@ const Home = ({
 						placeholder="Search Pokémon"
 						placeholderTextColor="#999"
 						value={searchQuery}
-						onChangeText={setSearchQuery}
+						onChangeText={(text) => setSearchQuery(text.toLowerCase())}
 						style={styles.searchInput}
 					/>
 					{searchQuery !== "" && (

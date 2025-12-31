@@ -1,32 +1,48 @@
 import { PokemonAPI } from "@/src/interface/PokeAPInterface";
-import { Image, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import typeColors from "./Pokemontype/poketype";
 
 type PokemonTypeKey = keyof typeof typeColors;
 
-const PokeCard = ({ name, sprites, types, id }: PokemonAPI, Rows: number) => {
+const PokeCard = (pokemon: PokemonAPI, Rows: number) => {
+	const router = useRouter();
+	const { name, sprites, types } = pokemon;
+
+	const bg =
+		types && types.length
+			? typeColors[types[0].type.name as PokemonTypeKey]
+			: "#eee";
+
+	// Use flex-basis for grid columns so two cards fit side-by-side cleanly
+	const outerStyle: any = {
+		flexBasis: Rows === 2 ? "49%" : "95%",
+		margin: 1,
+	};
+
 	return (
-		<View
-			style={[
-				styles.card,
-				{
-					backgroundColor: typeColors[types[0].type.name as PokemonTypeKey],
-					width: Rows === 2 ? "45%" : "95%",
-				},
-			]}>
+		<Pressable
+			onPress={() => {
+				try {
+					router.push({ pathname: "/Screens/PokemonDetail", params: { data: JSON.stringify(pokemon) } });
+				} catch (e) {
+					console.warn("Navigation error", e);
+				}
+			}}
+			style={outerStyle}>
 			<View
-				style={{
-					flexDirection: "row",
-					borderRadius: 10,
-				}}>
+				style={[
+					styles.card,
+					{
+						backgroundColor: bg,
+					},
+				]}>
 				{sprites.front_default && (
 					<Image source={{ uri: sprites.front_default }} style={styles.image} />
 				)}
-				{/* {sprites.back_default && ( <Image source={{ uri: sprites.back_default }} style={styles.image} /> )} */}
+				<Text style={styles.name}>{name}</Text>
 			</View>
-			<Text style={styles.name}>{name}</Text>
-			{/* <Text style={styles.name}>#{id}</Text> */}
-		</View>
+		</Pressable>
 	);
 };
 
@@ -44,8 +60,8 @@ const styles = StyleSheet.create({
 		height: 150,
 	},
 	name: {
-		marginTop: 5,
-		fontSize: 25,
+		marginTop: 2,
+		fontSize: 20,
 		textTransform: "capitalize",
 		textAlign: "center",
 	},
