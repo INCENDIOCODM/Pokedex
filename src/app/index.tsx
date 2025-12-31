@@ -1,7 +1,7 @@
 // Index.tsx
-import { featchPokemonData, featchPokemonsList } from "@/functions/ApiCalls";
-import { PokemonAPI } from "@/interface/PokeAPInterface";
-import Home from "@/Screens/Home";
+import { featchPokemonData, featchPokemonsList } from "@/src/functions/ApiCalls";
+import { PokemonAPI } from "@/src/interface/PokeAPInterface";
+import Home from "@/src/Screens/Home";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

@@ -1,4 +1,4 @@
-import PokeCard from "@/components/pokeCard";
+import PokeCard from "../components/pokeCard";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {

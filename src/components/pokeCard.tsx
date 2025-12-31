@@ -1,4 +1,4 @@
-import { PokemonAPI } from "@/interface/PokeAPInterface";
+import { PokemonAPI } from "@/src/interface/PokeAPInterface";
 import { Image, StyleSheet, Text, View } from "react-native";
 import typeColors from "./Pokemontype/poketype";
 
