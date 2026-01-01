@@ -38,6 +38,7 @@ export default function PokemonDetails() {
 		mainType && (typeColors as any)[mainType]
 			? (typeColors as any)[mainType]
 			: "#fff";
+	const hp = pokemon.stats?.find((s: any) => s.stat.name === "hp")?.base_stat;
 
 	return (
 		<ScrollView
@@ -77,22 +78,35 @@ export default function PokemonDetails() {
 				</View>
 
 				<View style={styles.section}>
+          <View style={{alignItems: "center"}}>
 					<Text style={styles.sectionTitle}>About</Text>
+          </View>
 					<View style={styles.aboutRow}>
-						<Text style={styles.aboutLabel}>Height</Text>
-						<Text style={styles.aboutValue}>{pokemon.height ?? "—"}</Text>
-					</View>
-					<View style={styles.aboutRow}>
-						<Text style={styles.aboutLabel}>Weight</Text>
-						<Text style={styles.aboutValue}>{pokemon.weight ?? "—"}</Text>
+						<View style={styles.aboutBox}>
+							<Text style={styles.aboutBoxLabel}>HP</Text>
+							<Text style={styles.aboutBoxValue}>{hp ?? "—"}</Text>
+						</View>
+						<View style={styles.aboutBox}>
+							<Text style={styles.aboutBoxLabel}>Height</Text>
+							<Text style={styles.aboutBoxValue}>{pokemon.height ?? "—"}</Text>
+						</View>
+						<View style={styles.aboutBox}>
+							<Text style={styles.aboutBoxLabel}>Weight</Text>
+							<Text style={styles.aboutBoxValue}>{pokemon.weight ?? "—"}</Text>
+						</View>
 					</View>
 				</View>
 
 				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Stats</Text>
+          <View style={{alignItems: "center"}}>
+					    <Text style={styles.sectionTitle}>Stats</Text>
+          </View>
 					{pokemon.stats?.map((s: any) => (
+            s.stat.name === "hp" ? null :
 						<View key={s.stat.name} style={styles.statRow}>
-							<Text style={styles.statName}>{s.stat.name}</Text>
+							<Text style={styles.statName}>
+								{s.stat.name.replace("-", " ")}
+							</Text>
 							<View style={styles.statBarBackground}>
 								<View
 									style={[
@@ -112,9 +126,9 @@ export default function PokemonDetails() {
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Abilities</Text>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-						{pokemon.abilities?.map((a: any) => (
-							<View key={a.ability.name} style={styles.abilityBadge}>
-								<Text style={styles.abilityText}>{a.ability.name}</Text>
+						{pokemon.abilities?.map((ab: any) => (
+							<View key={ab.ability.name} style={styles.abilityBadge}>
+								<Text style={styles.abilityText}>{ab.ability.name}</Text>
 							</View>
 						))}
 					</View>
@@ -189,17 +203,44 @@ const styles = StyleSheet.create({
 		padding: 12,
 		borderRadius: 12,
 		elevation: 2,
+		justifyContent: "center",
+		alignItems: "stretch",
 	},
-	sectionTitle: { fontSize: 16, fontWeight: "700", marginBottom: 8 },
+	sectionTitle: { fontSize: 20, fontWeight: "700", marginBottom: 8 },
 	aboutRow: {
 		flexDirection: "row",
-		justifyContent: "space-between",
+		justifyContent: "space-around",
+		alignItems: "center",
+		width: "100%",
 		paddingVertical: 6,
 	},
-	aboutLabel: { color: "#666" },
-	aboutValue: { fontWeight: "700" },
+	aboutBox: {
+		width: 110,
+		height: 110,
+		borderRadius: 14,
+		borderWidth: 2,
+		borderColor: "#e6e6e6",
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#fff",
+		shadowColor: "#000",
+		shadowOpacity: 0.05,
+		shadowRadius: 6,
+		elevation: 3,
+	},
+	aboutBoxLabel: { color: "#444", fontWeight: "600", marginBottom: 6 },
+	aboutBoxValue: { fontWeight: "700", fontSize: 20, color: "#111" },
+
 	statRow: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
-	statName: { width: 100, textTransform: "capitalize", color: "#333" },
+
+	statName: {
+		minWidth: 120,
+		flexShrink: 0,
+		marginRight: 8,
+		textTransform: "capitalize",
+		color: "#333",
+	},
+
 	statBarBackground: {
 		flex: 1,
 		height: 8,
