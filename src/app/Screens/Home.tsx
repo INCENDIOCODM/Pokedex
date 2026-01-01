@@ -1,6 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
 	FlatList,
@@ -24,6 +25,30 @@ const Home = ({
 	const filteredPokemons = pokemons.filter((pokemon: any) =>
 		pokemon.name.toLowerCase().includes(searchQuery.toLowerCase())
 	);
+
+	const ListView = async (value: string): Promise<void> => {
+		try {
+			await AsyncStorage.setItem("ListView", value);
+		} catch (e) {
+			console.error("Error storing data", e);
+		}
+	};
+
+	useEffect(() => {
+		const loadListView = async () => {
+			try {
+				const v = await AsyncStorage.getItem("ListView");
+				if (v !== null && typeof setRows === "function") {
+					const n = parseInt(v, 10);
+					if (!isNaN(n)) setRows(n);
+				}
+			} catch (e) {
+				console.error("Error loading ListView", e);
+			}
+		};
+
+		loadListView();
+	}, []);
 
 	return (
 		<View style={styles.container}>
@@ -68,9 +93,12 @@ const Home = ({
 						styles.toggleButton,
 						pressed && styles.toggleButtonPressed,
 					]}
-					onPress={() => setRows(rows === 1 ? 2 : 1)}>
+					onPress={async () => {
+						await ListView(rows === 1 ? "2" : "1");
+						setRows(rows === 1 ? 2 : 1);
+					}}>
 					<Ionicons
-						name={rows === 1 ? "list" : "grid"}
+						name={rows === "1" ? "list" : "grid"}
 						size={30}
 						color="#fff"
 					/>
