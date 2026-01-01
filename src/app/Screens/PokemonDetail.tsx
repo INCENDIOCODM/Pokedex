@@ -40,6 +40,31 @@ export default function PokemonDetails() {
 			: "#fff";
 	const hp = pokemon.stats?.find((s: any) => s.stat.name === "hp")?.base_stat;
 
+	const typeEmoji: Record<string, string> = {
+		fire: "🔥",
+		water: "💧",
+		grass: "🍃",
+		electric: "⚡",
+		psychic: "🔮",
+		ice: "❄️",
+		rock: "🪨",
+		dragon: "🐉",
+		ghost: "👻",
+		fairy: "✨",
+		poison: "☠️",
+		normal: " ",
+		fighting: "🥊",
+		flying: "🕊️",
+		bug: "🐛",
+		ground: "🌍",
+		steel: "⚙️",
+		dark: "🌙",
+		unknown: "❔",
+		shadow: "🕶️",
+	};
+
+	const bgEmoji = mainType ? typeEmoji[mainType] || "" : "";
+
 	return (
 		<ScrollView
 			contentContainerStyle={[
@@ -55,32 +80,43 @@ export default function PokemonDetails() {
 			</View>
 
 			<View style={styles.cardArea}>
-				<Image
-					source={{
-						uri:
-							pokemon.sprites?.other?.["official-artwork"]?.front_default ||
-							pokemon.sprites?.front_default,
-					}}
-					style={styles.image}
-				/>
+				{bgEmoji ? (
+					<View style={styles.emojiBg} pointerEvents="none">
+						<Text style={styles.emojiText}>
+							{Array(8).fill(bgEmoji).join(" ")}
+						</Text>
+					</View>
+				) : null}
+				<View style={styles.cardContent}>
+					<Image
+						source={{
+							uri:
+								pokemon.sprites?.other?.["official-artwork"]?.front_default ||
+								pokemon.sprites?.front_default,
+						}}
+						style={styles.image}
+					/>
 
-				<View style={styles.typeRow}>
-					{pokemon.types?.map((t: any) => (
-						<View
-							key={t.type.name}
-							style={[
-								styles.typeBadge,
-								{ backgroundColor: (typeColors as any)[t.type.name] || "#ddd" },
-							]}>
-							<Text style={styles.typeText}>{t.type.name}</Text>
-						</View>
-					))}
+					<View style={styles.typeRow}>
+						{pokemon.types?.map((t: any) => (
+							<View
+								key={t.type.name}
+								style={[
+									styles.typeBadge,
+									{
+										backgroundColor: (typeColors as any)[t.type.name] || "#ddd",
+									},
+								]}>
+								<Text style={styles.typeText}>{t.type.name}</Text>
+							</View>
+						))}
+					</View>
 				</View>
 
 				<View style={styles.section}>
-          <View style={{alignItems: "center"}}>
-					<Text style={styles.sectionTitle}>About</Text>
-          </View>
+					<View style={{ alignItems: "center" }}>
+						<Text style={styles.sectionTitle}>About</Text>
+					</View>
 					<View style={styles.aboutRow}>
 						<View style={styles.aboutBox}>
 							<Text style={styles.aboutBoxLabel}>HP</Text>
@@ -98,29 +134,30 @@ export default function PokemonDetails() {
 				</View>
 
 				<View style={styles.section}>
-          <View style={{alignItems: "center"}}>
-					    <Text style={styles.sectionTitle}>Stats</Text>
-          </View>
-					{pokemon.stats?.map((s: any) => (
-            s.stat.name === "hp" ? null :
-						<View key={s.stat.name} style={styles.statRow}>
-							<Text style={styles.statName}>
-								{s.stat.name.replace("-", " ")}
-							</Text>
-							<View style={styles.statBarBackground}>
-								<View
-									style={[
-										styles.statBarFill,
-										{
-											width: `${Math.min(s.base_stat, 100)}%`,
-											backgroundColor: bg,
-										},
-									]}
-								/>
+					<View style={{ alignItems: "center" }}>
+						<Text style={styles.sectionTitle}>Stats</Text>
+					</View>
+					{pokemon.stats?.map((s: any) =>
+						s.stat.name === "hp" ? null : (
+							<View key={s.stat.name} style={styles.statRow}>
+								<Text style={styles.statName}>
+									{s.stat.name.replace("-", " ")}
+								</Text>
+								<View style={styles.statBarBackground}>
+									<View
+										style={[
+											styles.statBarFill,
+											{
+												width: `${Math.min(s.base_stat, 100)}%`,
+												backgroundColor: bg,
+											},
+										]}
+									/>
+								</View>
+								<Text style={styles.statValue}>{s.base_stat}</Text>
 							</View>
-							<Text style={styles.statValue}>{s.base_stat}</Text>
-						</View>
-					))}
+						)
+					)}
 				</View>
 
 				<View style={styles.section}>
@@ -176,7 +213,7 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontWeight: "600",
 	},
-	cardArea: { marginTop: -40, paddingHorizontal: 20 },
+	cardArea: { marginTop: -40, paddingHorizontal: 20, position: "relative" },
 	image: {
 		width: 260,
 		height: 260,
@@ -230,6 +267,22 @@ const styles = StyleSheet.create({
 	},
 	aboutBoxLabel: { color: "#444", fontWeight: "600", marginBottom: 6 },
 	aboutBoxValue: { fontWeight: "700", fontSize: 20, color: "#111" },
+
+	cardContent: { zIndex: 1 },
+
+	emojiBg: {
+		position: "absolute",
+		top: 35,
+		left: 0,
+		right: 0,
+		height: 230,
+		justifyContent: "center",
+		alignItems: "center",
+		zIndex: 0,
+		opacity: 0.15,
+	},
+
+	emojiText: { fontSize: 92, textAlign: "center" },
 
 	statRow: { flexDirection: "row", alignItems: "center", marginBottom: 8 },
 
