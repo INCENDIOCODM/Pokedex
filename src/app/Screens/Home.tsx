@@ -1,6 +1,6 @@
-import { Ionicons } from "@expo/vector-icons";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialDesignIcons } from "@react-native-vector-icons/material-design-icons";
 import React, { useEffect, useState } from "react";
 import {
 	ActivityIndicator,
@@ -57,7 +57,7 @@ const Home = ({
 				<View style={styles.titleSection}>
 					<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
 						<Text style={styles.titleText}>Pokédex</Text>
-						<MaterialDesignIcons
+						<MaterialCommunityIcons
 							name="pokeball"
 							color="#ff0000"
 							size={40}
