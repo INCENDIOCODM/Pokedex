@@ -47,7 +47,7 @@ const Home = ({
 				key={rows}
 				keyExtractor={(item) => item.id.toString()}
 				contentContainerStyle={styles.listContent}
-				renderItem={({ item }) => <PokeCard pokemon={item} rows={rows} />}
+				renderItem={({ item }) => <PokeCard pokemon={item} Rows={rows} />}
 				onEndReached={fetchMorePokemons}
 				numColumns={rows}
 				onEndReachedThreshold={0.4}
