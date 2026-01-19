@@ -5,7 +5,12 @@ import typeColors from "./Pokemontype/poketype";
 
 type PokemonTypeKey = keyof typeof typeColors;
 
-const PokeCard = (pokemon: PokemonAPI, Rows: number) => {
+type PokeCardProps = {
+	pokemon: PokemonAPI;
+	Rows: number;
+};
+
+const PokeCard = ({ pokemon, Rows }: PokeCardProps) => {
 	const router = useRouter();
 	const { name, sprites, types } = pokemon;
 
