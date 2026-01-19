@@ -28,11 +28,17 @@ const PokeCard = ({ pokemon, Rows }: PokeCardProps) => {
 	return (
 		<Pressable
 			onPress={() => {
-				try {
-					router.push({ pathname: "/Screens/PokemonDetail", params: { data: JSON.stringify(pokemon) } });
-				} catch (e) {
-					console.warn("Navigation error", e);
-				}
+				// requestAnimationFrame to allow UI to respond before navigation
+				requestAnimationFrame(() => {
+					try {
+						router.push({
+							pathname: "/Screens/PokemonDetail",
+							params: { pokemonId: String(pokemon.id) },
+						});
+					} catch (e) {
+						console.warn("Navigation error", e);
+					}
+				});
 			}}
 			style={outerStyle}>
 			<View

@@ -9,17 +9,52 @@ import {
 	View,
 } from "react-native";
 import typeColors from "../../components/Pokemontype/poketype";
+import SkeletonScreen from "./SkeletonScreen";
+import { featchPokemonData } from "../../functions/ApiCalls";
 
 export default function PokemonDetails() {
-	const { data } = useLocalSearchParams<{ data: string }>();
+	const { pokemonId } = useLocalSearchParams<{ pokemonId: string }>();
 	const router = useRouter();
 
-	let pokemon: any | null = null;
-	try {
-		if (data) pokemon = JSON.parse(data as string);
-	} catch (e) {
-		console.warn("Failed to parse pokemon data", e);
-	}
+	const [loading, setLoading] = React.useState(true);
+	const [pokemon, setPokemon] = React.useState<any | null>(null);
+
+	React.useEffect(() => {
+		let cancelled = false;
+		const id = pokemonId ? Number(pokemonId) : null;
+		if (!id) {
+			setLoading(false);
+			setPokemon(null);
+			return;
+		}
+
+		const fetchData = async () => {
+			setLoading(true);
+			try {
+				const data = await featchPokemonData(
+					`https://pokeapi.co/api/v2/pokemon/${id}`,
+				);
+				if (!cancelled) setPokemon(data);
+			} catch (e) {
+				console.warn("Failed to fetch pokemon data", e);
+				if (!cancelled) setPokemon(null);
+			} finally {
+				// Artificial delay for the sake of UX
+				await new Promise((r: any) => setTimeout(r, 400));
+				if (!cancelled) setLoading(false);
+			}
+		};
+
+		// show skeleton immediately, start fetch next frame
+		const raf = requestAnimationFrame(() => fetchData());
+
+		return () => {
+			cancelled = true;
+			cancelAnimationFrame(raf);
+		};
+	}, [pokemonId]);
+
+	if (loading) return <SkeletonScreen variant={"detail"} />;
 
 	if (!pokemon) {
 		return (
@@ -137,8 +172,9 @@ export default function PokemonDetails() {
 					<View style={{ alignItems: "center" }}>
 						<Text style={styles.sectionTitle}>Stats</Text>
 					</View>
-					{pokemon.stats?.map((s: any) =>
-						s.stat.name === "hp" ? null : (
+					{pokemon.stats
+						?.filter((s: any) => s.stat.name !== "hp")
+						.map((s: any) => (
 							<View key={s.stat.name} style={styles.statRow}>
 								<Text style={styles.statName}>
 									{s.stat.name.replace("-", " ")}
@@ -156,8 +192,7 @@ export default function PokemonDetails() {
 								</View>
 								<Text style={styles.statValue}>{s.base_stat}</Text>
 							</View>
-						)
-					)}
+						))}
 				</View>
 
 				<View style={styles.section}>
