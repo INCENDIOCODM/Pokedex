@@ -6,14 +6,12 @@ import {
 } from "@/src/functions/ApiCalls";
 import { PokemonAPI } from "@/src/interface/PokeAPInterface";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function App() {
 	const count = 30;
 	const baseUrl = "https://pokeapi.co/api/v2/pokemon";
 	const [pokemons, setPokemons] = useState<PokemonAPI[]>([]);
-	const [initialLoading, setInitialLoading] = useState(true);
 	const [loadingMore, setLoadingMore] = useState(false);
 	const [hasMore, setHasMore] = useState(true);
 	const [rows, setRows] = useState(1);
@@ -32,8 +30,6 @@ export default function App() {
 				if (!list.next) setHasMore(false);
 			} catch (err) {
 				console.error("Failed to load pokemons", err);
-			} finally {
-				setInitialLoading(false);
 			}
 		};
 		loadPokemons();
@@ -60,15 +56,6 @@ export default function App() {
 		}
 	};
 
-	if (initialLoading) {
-		return (
-			<SafeAreaView
-				style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-				<ActivityIndicator size="large" />
-			</SafeAreaView>
-		);
-	}
-
 	return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<Home
@@ -81,3 +68,4 @@ export default function App() {
 		</SafeAreaView>
 	);
 }
+
