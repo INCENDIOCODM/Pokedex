@@ -1,23 +1,18 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import {
-	Image,
-	Pressable,
-	ScrollView,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { Image } from "expo-image";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import typeColors from "../../components/Pokemontype/poketype";
 import SkeletonScreen from "./SkeletonScreen";
-import { featchPokemonData } from "../../functions/ApiCalls";
+import { PokemonAPI } from "@/src/interface/PokeAPInterface";
+import { loadPokemonDetail } from "@/src/functions/PokemonRepository";
 
 export default function PokemonDetails() {
 	const { pokemonId } = useLocalSearchParams<{ pokemonId: string }>();
 	const router = useRouter();
 
 	const [loading, setLoading] = React.useState(true);
-	const [pokemon, setPokemon] = React.useState<any | null>(null);
+	const [pokemon, setPokemon] = React.useState<PokemonAPI | null>(null);
 
 	React.useEffect(() => {
 		let cancelled = false;
@@ -31,12 +26,10 @@ export default function PokemonDetails() {
 		const fetchData = async () => {
 			setLoading(true);
 			try {
-				const data = await featchPokemonData(
-					`https://pokeapi.co/api/v2/pokemon/${id}`,
-				);
-				if (!cancelled) setPokemon(data);
+				const result = await loadPokemonDetail(id);
+				if (!cancelled) setPokemon(result.pokemon);
 			} catch (e) {
-				console.warn("Failed to fetch pokemon data", e);
+				console.warn("Failed to load pokemon data", e);
 				if (!cancelled) setPokemon(null);
 			} finally {
 				// Artificial delay for the sake of UX
@@ -73,7 +66,7 @@ export default function PokemonDetails() {
 		mainType && (typeColors as any)[mainType]
 			? (typeColors as any)[mainType]
 			: "#fff";
-	const hp = pokemon.stats?.find((s: any) => s.stat.name === "hp")?.base_stat;
+	const hp = pokemon.stats.find((s) => s.stat.name === "hp")?.base_stat;
 
 	const typeEmoji: Record<string, string> = {
 		fire: "🔥",
@@ -130,10 +123,13 @@ export default function PokemonDetails() {
 								pokemon.sprites?.front_default,
 						}}
 						style={styles.image}
+						contentFit="contain"
+						cachePolicy="disk"
+						transition={180}
 					/>
 
 					<View style={styles.typeRow}>
-						{pokemon.types?.map((t: any) => (
+						{pokemon.types?.map((t) => (
 							<View
 								key={t.type.name}
 								style={[
@@ -173,8 +169,8 @@ export default function PokemonDetails() {
 						<Text style={styles.sectionTitle}>Stats</Text>
 					</View>
 					{pokemon.stats
-						?.filter((s: any) => s.stat.name !== "hp")
-						.map((s: any) => (
+						.filter((s) => s.stat.name !== "hp")
+						.map((s) => (
 							<View key={s.stat.name} style={styles.statRow}>
 								<Text style={styles.statName}>
 									{s.stat.name.replace("-", " ")}
@@ -198,7 +194,7 @@ export default function PokemonDetails() {
 				<View style={styles.section}>
 					<Text style={styles.sectionTitle}>Abilities</Text>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-						{pokemon.abilities?.map((ab: any) => (
+						{pokemon.abilities?.map((ab) => (
 							<View key={ab.ability.name} style={styles.abilityBadge}>
 								<Text style={styles.abilityText}>{ab.ability.name}</Text>
 							</View>

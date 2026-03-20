@@ -8,10 +8,16 @@ interface PokemonAPI {
 	sprites: {
 		front_default: string | null;
 		back_default: string | null;
+		other?: {
+			"official-artwork"?: {
+				front_default: string | null;
+			};
+		};
 	};
 
 	abilities: { ability: { name: string } }[];
 	types: { type: { name: string } }[];
+	stats: { base_stat: number; stat: { name: string } }[];
 }
 
 export interface PokemonListAPI {
