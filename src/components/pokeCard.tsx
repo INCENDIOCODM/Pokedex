@@ -1,6 +1,7 @@
 import { PokemonAPI } from "@/src/interface/PokeAPInterface";
 import { useRouter } from "expo-router";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image } from "expo-image";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import typeColors from "./Pokemontype/poketype";
 
 type PokemonTypeKey = keyof typeof typeColors;
@@ -49,7 +50,13 @@ const PokeCard = ({ pokemon, Rows }: PokeCardProps) => {
 					},
 				]}>
 				{sprites.front_default && (
-					<Image source={{ uri: sprites.front_default }} style={styles.image} />
+					<Image
+						source={{ uri: sprites.front_default }}
+						style={styles.image}
+						contentFit="contain"
+						cachePolicy="disk"
+						transition={120}
+					/>
 				)}
 				<Text style={styles.name}>{name}</Text>
 			</View>

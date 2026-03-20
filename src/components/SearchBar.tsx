@@ -11,9 +11,14 @@ interface SearchBarProps {
 	setRows?: (rows: number) => void;
 }
 
-const loop = () => {}
+const loop = () => {};
 
-const SearchBar = ({ searchQuery = "", setSearchQuery = loop, rows = 2, setRows = loop, }: SearchBarProps) => {
+const SearchBar = ({
+	searchQuery = "",
+	setSearchQuery = loop,
+	rows = 2,
+	setRows = loop,
+}: SearchBarProps) => {
 	const normalizedRows: 1 | 2 = Number(rows) === 1 ? 1 : 2;
 
 	const persistListView = async (value: 1 | 2): Promise<void> => {
@@ -53,7 +58,7 @@ const SearchBar = ({ searchQuery = "", setSearchQuery = loop, rows = 2, setRows 
 							style={{ marginTop: 5 }}
 						/>
 					</View>
-					<Text style={styles.subtitleText}>Catch 'em all!</Text>
+					<Text style={styles.subtitleText}>Catch &apos;em all!</Text>
 				</View>
 			</View>
 
