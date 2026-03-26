@@ -223,3 +223,9 @@ export const upsertPokemons = async (
 		await upsertPokemon(pokemon, updatedAt);
 	}
 };
+
+export const clearCache = async (): Promise<void> => {
+	await initPokemonCacheDb();
+	db.execSync("DELETE FROM pokemon_cache;");
+	db.execSync("DELETE FROM list_page_cache;");
+};
