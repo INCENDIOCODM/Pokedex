@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SkeletonScreen from "./Screens/SkeletonScreen";
 import { loadPokemonPage } from "@/src/functions/PokemonRepository";
+import { useTheme } from "@/src/context/ThemeContext";
 
 const mergeById = (
 	current: PokemonAPI[],
@@ -22,6 +23,7 @@ const mergeById = (
 };
 
 export default function App() {
+	const { colors } = useTheme();
 	const count = 30;
 	const [pokemons, setPokemons] = useState<PokemonAPI[]>([]);
 	const [loadingInitial, setLoadingInitial] = useState(true);
@@ -74,7 +76,7 @@ export default function App() {
 	};
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
+		<SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
 			{loadingInitial ? (
 				<SkeletonScreen variant="home" rows={rows === 1 ? 1 : 2} count={8} />
 			) : (

@@ -11,6 +11,7 @@ import PokeCard from "../../components/pokeCard";
 
 import SearchBar from "../../components/SearchBar";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/src/context/ThemeContext";
 
 const Home = ({
 	pokemons,
@@ -20,6 +21,7 @@ const Home = ({
 	setRows,
 }: any) => {
 	const router = useRouter();
+	const { colors } = useTheme();
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const normalizedRows: 1 | 2 = Number(rows) === 1 ? 1 : 2;
@@ -30,7 +32,7 @@ const Home = ({
 	);
 
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: colors.background }]}>
 			<SearchBar
 				searchQuery={searchQuery}
 				setSearchQuery={setSearchQuery}
@@ -40,8 +42,14 @@ const Home = ({
 			/>
 
 			{/* Pokemon Count Badge */}
-			<View style={styles.countContainer}>
-				<Text style={styles.countText}>{filteredPokemons.length} Pokémon</Text>
+			<View
+				style={[
+					styles.countContainer,
+					{ backgroundColor: colors.surface, borderBottomColor: colors.border },
+				]}>
+				<Text style={[styles.countText, { color: colors.mutedText }]}>
+					{filteredPokemons.length} Pokémon
+				</Text>
 			</View>
 
 			{/* FlatList */}
@@ -66,8 +74,10 @@ const Home = ({
 				}
 				ListEmptyComponent={
 					<View style={styles.emptyContainer}>
-						<Ionicons name="search" size={48} color="#ccc" />
-						<Text style={styles.emptyText}>No Pokémon found</Text>
+						<Ionicons name="search" size={48} color={colors.border} />
+						<Text style={[styles.emptyText, { color: colors.mutedText }]}>
+							No Pokémon found
+						</Text>
 					</View>
 				}
 			/>
@@ -80,18 +90,14 @@ export default Home;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#f5f5f5",
 	},
 	countContainer: {
 		paddingHorizontal: 16,
 		paddingVertical: 8,
-		backgroundColor: "#fff",
 		borderBottomWidth: 1,
-		borderBottomColor: "#f0f0f0",
 	},
 	countText: {
 		fontSize: 12,
-		color: "#666",
 		fontWeight: "500",
 		letterSpacing: 0.5,
 	},
@@ -107,7 +113,6 @@ const styles = StyleSheet.create({
 	},
 	emptyText: {
 		fontSize: 16,
-		color: "#999",
 		marginTop: 16,
 		fontWeight: "500",
 	},

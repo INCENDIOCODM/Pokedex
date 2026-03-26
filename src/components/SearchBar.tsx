@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTheme } from "@/src/context/ThemeContext";
 
 interface SearchBarProps {
 	searchQuery?: string;
@@ -21,6 +22,7 @@ const SearchBar = ({
 	setRows = loop,
 	onPressSettings,
 }: SearchBarProps) => {
+	const { colors } = useTheme();
 	const normalizedRows: 1 | 2 = Number(rows) === 1 ? 1 : 2;
 
 	const persistListView = async (value: 1 | 2): Promise<void> => {
@@ -49,36 +51,52 @@ const SearchBar = ({
 
 	return (
 		<View>
-			<View style={styles.headerContainer}>
+			<View
+				style={[
+					styles.headerContainer,
+					{ backgroundColor: colors.surface, borderBottomColor: colors.border },
+				]}>
 				<View style={styles.titleSection}>
 					<View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-						<Text style={styles.titleText}>Pokédex</Text>
+						<Text style={[styles.titleText, { color: colors.accent }]}>
+							Pokédex
+						</Text>
 						<MaterialCommunityIcons
 							name="pokeball"
-							color="#ff0000"
+							color={colors.accent}
 							size={40}
 							style={{ marginTop: 5 }}
 						/>
 					</View>
-					<Text style={styles.subtitleText}>Catch &apos;em all!</Text>
+					<Text style={[styles.subtitleText, { color: colors.mutedText }]}>
+						Catch &apos;em all!
+					</Text>
 				</View>
 			</View>
 
 			{/* Search & Filter Bar */}
-			<View style={styles.toolbarContainer}>
+			<View
+				style={[
+					styles.toolbarContainer,
+					{ backgroundColor: colors.surface, borderBottomColor: colors.border },
+				]}>
 				{/* Search Bar */}
-				<View style={styles.searchBarWrapper}>
-					<Ionicons name="search" size={20} color="#EF5350" />
+				<View
+					style={[
+						styles.searchBarWrapper,
+						{ backgroundColor: colors.surfaceAlt, borderColor: colors.border },
+					]}>
+					<Ionicons name="search" size={20} color={colors.accent} />
 					<TextInput
 						placeholder="Search Pokémon"
-						placeholderTextColor="#999"
+						placeholderTextColor={colors.mutedText}
 						value={searchQuery}
 						onChangeText={(text) => setSearchQuery(text.toLowerCase())}
-						style={styles.searchInput}
+						style={[styles.searchInput, { color: colors.text }]}
 					/>
 					{searchQuery !== "" && (
 						<Pressable onPress={() => setSearchQuery("")}>
-							<Ionicons name="close-circle" size={20} color="#EF5350" />
+							<Ionicons name="close-circle" size={20} color={colors.accent} />
 						</Pressable>
 					)}
 				</View>
@@ -86,16 +104,18 @@ const SearchBar = ({
 				<Pressable
 					style={({ pressed }) => [
 						styles.secondaryButton,
+						{ backgroundColor: colors.surfaceAlt, borderColor: colors.border },
 						pressed && styles.secondaryButtonPressed,
 					]}
 					onPress={onPressSettings}>
-					<Ionicons name="settings-outline" size={24} color="#333" />
+					<Ionicons name="settings-outline" size={24} color={colors.text} />
 				</Pressable>
 
 				{/* Grid Toggle Button */}
 				<Pressable
 					style={({ pressed }) => [
 						styles.toggleButton,
+						{ backgroundColor: colors.accent },
 						pressed && styles.toggleButtonPressed,
 					]}
 					onPress={async () => {
@@ -106,7 +126,7 @@ const SearchBar = ({
 					<Ionicons
 						name={normalizedRows === 1 ? "list" : "grid"}
 						size={30}
-						color="#fff"
+						color={colors.onAccent}
 					/>
 				</Pressable>
 			</View>
@@ -164,7 +184,6 @@ const styles = StyleSheet.create({
 		width: 56,
 		height: 56,
 		borderRadius: 14,
-		backgroundColor: "#EF5350",
 		justifyContent: "center",
 		alignItems: "center",
 		elevation: 3,
@@ -174,7 +193,7 @@ const styles = StyleSheet.create({
 		shadowRadius: 3,
 	},
 	toggleButtonPressed: {
-		backgroundColor: "#E53935",
+		opacity: 0.85,
 		elevation: 1,
 	},
 	secondaryButton: {
@@ -184,8 +203,6 @@ const styles = StyleSheet.create({
 		justifyContent: "center",
 		alignItems: "center",
 		borderWidth: 1,
-		borderColor: "#e0e0e0",
-		backgroundColor: "#f0f0f0",
 	},
 	secondaryButtonPressed: {
 		opacity: 0.75,
@@ -193,7 +210,6 @@ const styles = StyleSheet.create({
 	titleText: {
 		fontSize: 32,
 		fontWeight: "700",
-		color: "#EF5350",
 		letterSpacing: 1,
 	},
 });
