@@ -24,6 +24,11 @@ type ListPageRow = {
 	updated_at: number;
 };
 
+type FavoriteRow = {
+	id: number;
+	added_at: number;
+};
+
 export type CachedPokemon = {
 	pokemon: PokemonAPI;
 	updatedAt: number;
@@ -88,6 +93,14 @@ export const initPokemonCacheDb = async (): Promise<void> => {
 
 		CREATE INDEX IF NOT EXISTS idx_list_page_cache_updated_at
 		ON list_page_cache (updated_at);
+
+		CREATE TABLE IF NOT EXISTS favorites (
+			id INTEGER PRIMARY KEY NOT NULL,
+			added_at INTEGER NOT NULL
+		);
+
+		CREATE INDEX IF NOT EXISTS idx_favorites_added_at
+		ON favorites (added_at);
 	`);
 
 	const dbVersion = getMetaValue("schema_version");
@@ -228,4 +241,47 @@ export const clearCache = async (): Promise<void> => {
 	await initPokemonCacheDb();
 	db.execSync("DELETE FROM pokemon_cache;");
 	db.execSync("DELETE FROM list_page_cache;");
+};
+
+export const addFavorite = async (pokemonId: number): Promise<void> => {
+	await initPokemonCacheDb();
+	db.runSync(
+		`INSERT OR IGNORE INTO favorites (id, added_at)
+		 VALUES (?, ?)`,
+		pokemonId,
+		Date.now(),
+	);
+};
+
+export const removeFavorite = async (pokemonId: number): Promise<void> => {
+	await initPokemonCacheDb();
+	db.runSync("DELETE FROM favorites WHERE id = ?", pokemonId);
+};
+
+export const isFavorite = async (pokemonId: number): Promise<boolean> => {
+	await initPokemonCacheDb();
+	const row = db.getFirstSync(
+		"SELECT id FROM favorites WHERE id = ?",
+		pokemonId,
+	) as FavoriteRow | null;
+	return row !== null;
+};
+
+export const getFavoriteIds = async (): Promise<number[]> => {
+	await initPokemonCacheDb();
+	const rows = db.getAllSync(
+		"SELECT id FROM favorites ORDER BY added_at DESC",
+	) as FavoriteRow[];
+	return rows.map((row) => row.id);
+};
+
+export const toggleFavorite = async (pokemonId: number): Promise<boolean> => {
+	const isFav = await isFavorite(pokemonId);
+	if (isFav) {
+		await removeFavorite(pokemonId);
+		return false;
+	} else {
+		await addFavorite(pokemonId);
+		return true;
+	}
 };

@@ -19,6 +19,7 @@ const Home = ({
 	rows,
 	loadingMore,
 	setRows,
+	onFavoriteChange,
 }: any) => {
 	const router = useRouter();
 	const { colors } = useTheme();

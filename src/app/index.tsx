@@ -1,5 +1,5 @@
 // Index.tsx
-import Home from "@/src/app/Screens/Home";
+import HomeTabs from "@/src/app/Screens/HomeTabs";
 import { PokemonAPI } from "@/src/interface/PokeAPInterface";
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -80,7 +80,7 @@ export default function App() {
 			{loadingInitial ? (
 				<SkeletonScreen variant="home" rows={rows === 1 ? 1 : 2} count={8} />
 			) : (
-				<Home
+				<HomeTabs
 					pokemons={pokemons}
 					fetchMorePokemons={fetchMorePokemons}
 					rows={rows}

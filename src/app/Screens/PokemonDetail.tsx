@@ -6,13 +6,22 @@ import typeColors from "../../components/Pokemontype/poketype";
 import SkeletonScreen from "./SkeletonScreen";
 import { PokemonAPI } from "@/src/interface/PokeAPInterface";
 import { loadPokemonDetail } from "@/src/functions/PokemonRepository";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useTheme } from "@/src/context/ThemeContext";
+import {
+	CheckIfFavourite,
+	ToggleFavourite,
+} from "@/src/functions/FavouritePokemons";
 
 export default function PokemonDetails() {
 	const { pokemonId } = useLocalSearchParams<{ pokemonId: string }>();
 	const router = useRouter();
+	const { colors, theme } = useTheme();
 
 	const [loading, setLoading] = React.useState(true);
 	const [pokemon, setPokemon] = React.useState<PokemonAPI | null>(null);
+	const [isFavorite, setIsFavorite] = React.useState(false);
+	const [toggleLoading, setToggleLoading] = React.useState(false);
 
 	React.useEffect(() => {
 		let cancelled = false;
@@ -27,7 +36,11 @@ export default function PokemonDetails() {
 			setLoading(true);
 			try {
 				const result = await loadPokemonDetail(id);
-				if (!cancelled) setPokemon(result.pokemon);
+				if (!cancelled) {
+					setPokemon(result.pokemon);
+					const isFav = await CheckIfFavourite(id);
+					setIsFavorite(isFav);
+				}
 			} catch (e) {
 				console.warn("Failed to load pokemon data", e);
 				if (!cancelled) setPokemon(null);
@@ -47,12 +60,27 @@ export default function PokemonDetails() {
 		};
 	}, [pokemonId]);
 
+	const handleToggleFavorite = async () => {
+		if (!pokemon) return;
+		setToggleLoading(true);
+		try {
+			const result = await ToggleFavourite(pokemon.id);
+			setIsFavorite(result);
+		} catch (error) {
+			console.error("Failed to toggle favorite", error);
+		} finally {
+			setToggleLoading(false);
+		}
+	};
+
 	if (loading) return <SkeletonScreen variant={"detail"} />;
 
 	if (!pokemon) {
 		return (
 			<View style={styles.center}>
-				<Text style={{ fontSize: 16 }}>No Pokémon data available</Text>
+				<Text style={{ fontSize: 16, color: colors.text }}>
+					No Pokémon data available
+				</Text>
 				<Pressable onPress={() => router.back()} style={styles.backButton}>
 					<Text style={{ color: "#fff" }}>Go Back</Text>
 				</Pressable>
@@ -97,20 +125,36 @@ export default function PokemonDetails() {
 		<ScrollView
 			contentContainerStyle={[
 				styles.container,
-				{ backgroundColor: "#f6f6f6" },
+				{ backgroundColor: colors.background },
 			]}>
 			<View style={[styles.header, { backgroundColor: bg }]}>
 				<Pressable onPress={() => router.back()} style={styles.backPress}>
 					<Text style={styles.backText}>←</Text>
 				</Pressable>
 				<Text style={styles.headerName}>{pokemon.name}</Text>
-				<Text style={styles.headerId}>#{pokemon.id}</Text>
+				<View style={styles.headerRightContainer}>
+					<Pressable
+						onPress={handleToggleFavorite}
+						disabled={toggleLoading}
+						style={styles.favoriteButton}>
+						<Ionicons
+							name={isFavorite ? "heart" : "heart-outline"}
+							size={24}
+							color={isFavorite ? "#ff4757" : "#fff"}
+						/>
+					</Pressable>
+					<Text style={styles.headerId}>#{pokemon.id}</Text>
+				</View>
 			</View>
 
 			<View style={styles.cardArea}>
 				{bgEmoji ? (
 					<View style={styles.emojiBg} pointerEvents="none">
-						<Text style={styles.emojiText}>
+						<Text
+							style={[
+								styles.emojiText,
+								{ opacity: theme === "dark" ? 0.35 : 1 },
+							]}>
 							{Array(8).fill(bgEmoji).join(" ")}
 						</Text>
 					</View>
@@ -119,8 +163,9 @@ export default function PokemonDetails() {
 					<Image
 						source={{
 							uri:
-								pokemon.sprites?.other?.["official-artwork"]?.front_default ||
-								pokemon.sprites?.front_default,
+								pokemon.sprites?.other?.["official-artwork"]?.front_default ??
+								pokemon.sprites?.front_default ??
+								"",
 						}}
 						style={styles.image}
 						contentFit="contain"
@@ -144,38 +189,87 @@ export default function PokemonDetails() {
 					</View>
 				</View>
 
-				<View style={styles.section}>
+				<View
+					style={[
+						styles.section,
+						{ backgroundColor: colors.surface, borderColor: colors.border },
+					]}>
 					<View style={{ alignItems: "center" }}>
-						<Text style={styles.sectionTitle}>About</Text>
+						<Text style={[styles.sectionTitle, { color: colors.text }]}>
+							About
+						</Text>
 					</View>
 					<View style={styles.aboutRow}>
-						<View style={styles.aboutBox}>
-							<Text style={styles.aboutBoxLabel}>HP</Text>
-							<Text style={styles.aboutBoxValue}>{hp ?? "—"}</Text>
+						<View
+							style={[
+								styles.aboutBox,
+								{
+									backgroundColor: colors.surfaceAlt,
+									borderColor: colors.border,
+								},
+							]}>
+							<Text style={[styles.aboutBoxLabel, { color: colors.mutedText }]}>
+								HP
+							</Text>
+							<Text style={[styles.aboutBoxValue, { color: colors.text }]}>
+								{hp ?? "—"}
+							</Text>
 						</View>
-						<View style={styles.aboutBox}>
-							<Text style={styles.aboutBoxLabel}>Height</Text>
-							<Text style={styles.aboutBoxValue}>{pokemon.height ?? "—"}</Text>
+						<View
+							style={[
+								styles.aboutBox,
+								{
+									backgroundColor: colors.surfaceAlt,
+									borderColor: colors.border,
+								},
+							]}>
+							<Text style={[styles.aboutBoxLabel, { color: colors.mutedText }]}>
+								Height
+							</Text>
+							<Text style={[styles.aboutBoxValue, { color: colors.text }]}>
+								{pokemon.height ?? "—"}
+							</Text>
 						</View>
-						<View style={styles.aboutBox}>
-							<Text style={styles.aboutBoxLabel}>Weight</Text>
-							<Text style={styles.aboutBoxValue}>{pokemon.weight ?? "—"}</Text>
+						<View
+							style={[
+								styles.aboutBox,
+								{
+									backgroundColor: colors.surfaceAlt,
+									borderColor: colors.border,
+								},
+							]}>
+							<Text style={[styles.aboutBoxLabel, { color: colors.mutedText }]}>
+								Weight
+							</Text>
+							<Text style={[styles.aboutBoxValue, { color: colors.text }]}>
+								{pokemon.weight ?? "—"}
+							</Text>
 						</View>
 					</View>
 				</View>
 
-				<View style={styles.section}>
+				<View
+					style={[
+						styles.section,
+						{ backgroundColor: colors.surface, borderColor: colors.border },
+					]}>
 					<View style={{ alignItems: "center" }}>
-						<Text style={styles.sectionTitle}>Stats</Text>
+						<Text style={[styles.sectionTitle, { color: colors.text }]}>
+							Stats
+						</Text>
 					</View>
 					{pokemon.stats
 						.filter((s) => s.stat.name !== "hp")
 						.map((s) => (
 							<View key={s.stat.name} style={styles.statRow}>
-								<Text style={styles.statName}>
+								<Text style={[styles.statName, { color: colors.text }]}>
 									{s.stat.name.replace("-", " ")}
 								</Text>
-								<View style={styles.statBarBackground}>
+								<View
+									style={[
+										styles.statBarBackground,
+										{ backgroundColor: colors.border },
+									]}>
 									<View
 										style={[
 											styles.statBarFill,
@@ -186,17 +280,32 @@ export default function PokemonDetails() {
 										]}
 									/>
 								</View>
-								<Text style={styles.statValue}>{s.base_stat}</Text>
+								<Text style={[styles.statValue, { color: colors.text }]}>
+									{s.base_stat}
+								</Text>
 							</View>
 						))}
 				</View>
 
-				<View style={styles.section}>
-					<Text style={styles.sectionTitle}>Abilities</Text>
+				<View
+					style={[
+						styles.section,
+						{ backgroundColor: colors.surface, borderColor: colors.border },
+					]}>
+					<Text style={[styles.sectionTitle, { color: colors.text }]}>
+						Abilities
+					</Text>
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
 						{pokemon.abilities?.map((ab) => (
-							<View key={ab.ability.name} style={styles.abilityBadge}>
-								<Text style={styles.abilityText}>{ab.ability.name}</Text>
+							<View
+								key={ab.ability.name}
+								style={[
+									styles.abilityBadge,
+									{ backgroundColor: colors.surfaceAlt },
+								]}>
+								<Text style={[styles.abilityText, { color: colors.text }]}>
+									{ab.ability.name}
+								</Text>
 							</View>
 						))}
 					</View>
@@ -244,6 +353,17 @@ const styles = StyleSheet.create({
 		color: "#fff",
 		fontWeight: "600",
 	},
+	headerRightContainer: {
+		position: "absolute",
+		right: 12,
+		top: 48,
+		alignItems: "center",
+		gap: 4,
+	},
+	favoriteButton: {
+		padding: 8,
+		marginBottom: 4,
+	},
 	cardArea: { marginTop: -40, paddingHorizontal: 20, position: "relative" },
 	image: {
 		width: 260,
@@ -268,6 +388,8 @@ const styles = StyleSheet.create({
 	section: {
 		marginTop: 18,
 		backgroundColor: "#fff",
+		borderWidth: 1,
+		borderColor: "transparent",
 		padding: 12,
 		borderRadius: 12,
 		elevation: 2,
