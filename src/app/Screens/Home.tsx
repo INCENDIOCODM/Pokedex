@@ -10,6 +10,7 @@ import {
 import PokeCard from "../../components/pokeCard";
 
 import SearchBar from "../../components/SearchBar";
+import { useRouter } from "expo-router";
 
 const Home = ({
 	pokemons,
@@ -18,6 +19,7 @@ const Home = ({
 	loadingMore,
 	setRows,
 }: any) => {
+	const router = useRouter();
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const normalizedRows: 1 | 2 = Number(rows) === 1 ? 1 : 2;
@@ -34,6 +36,7 @@ const Home = ({
 				setSearchQuery={setSearchQuery}
 				rows={normalizedRows}
 				setRows={setRows}
+				onPressSettings={() => router.push("../Screens/Settings")}
 			/>
 
 			{/* Pokemon Count Badge */}

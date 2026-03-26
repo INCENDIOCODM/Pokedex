@@ -9,6 +9,7 @@ interface SearchBarProps {
 	setSearchQuery?: (query: string) => void;
 	rows?: number | string | undefined;
 	setRows?: (rows: number) => void;
+	onPressSettings?: () => void;
 }
 
 const loop = () => {};
@@ -18,6 +19,7 @@ const SearchBar = ({
 	setSearchQuery = loop,
 	rows = 2,
 	setRows = loop,
+	onPressSettings,
 }: SearchBarProps) => {
 	const normalizedRows: 1 | 2 = Number(rows) === 1 ? 1 : 2;
 
@@ -80,6 +82,15 @@ const SearchBar = ({
 						</Pressable>
 					)}
 				</View>
+
+				<Pressable
+					style={({ pressed }) => [
+						styles.secondaryButton,
+						pressed && styles.secondaryButtonPressed,
+					]}
+					onPress={onPressSettings}>
+					<Ionicons name="settings-outline" size={24} color="#333" />
+				</Pressable>
 
 				{/* Grid Toggle Button */}
 				<Pressable
@@ -165,6 +176,19 @@ const styles = StyleSheet.create({
 	toggleButtonPressed: {
 		backgroundColor: "#E53935",
 		elevation: 1,
+	},
+	secondaryButton: {
+		width: 56,
+		height: 56,
+		borderRadius: 14,
+		justifyContent: "center",
+		alignItems: "center",
+		borderWidth: 1,
+		borderColor: "#e0e0e0",
+		backgroundColor: "#f0f0f0",
+	},
+	secondaryButtonPressed: {
+		opacity: 0.75,
 	},
 	titleText: {
 		fontSize: 32,
