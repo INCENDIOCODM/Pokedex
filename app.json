@@ -7,16 +7,19 @@
 		"icon": "./src/assets/images/icon.png",
 		"scheme": "pokedex",
 		"userInterfaceStyle": "automatic",
+		"splash": {
+			"image": "./src/assets/images/splash.png",
+			"resizeMode": "contain",
+			"backgroundColor": "#f03333"
+		},
 		"newArchEnabled": true,
 		"ios": {
 			"supportsTablet": false
 		},
 		"android": {
 			"adaptiveIcon": {
-				"backgroundColor": "#E6F4FE",
-				"foregroundImage": "./src/assets/images/android-icon-foreground.png",
-				"backgroundImage": "./src/assets/images/android-icon-background.png",
-				"monochromeImage": "./src/assets/images/android-icon-monochrome.png"
+				"backgroundColor": "#ffffff",
+				"foregroundImage": "./src/assets/images/adaptive-icon.png"
 			},
 			"edgeToEdgeEnabled": true,
 			"predictiveBackGestureEnabled": false,
