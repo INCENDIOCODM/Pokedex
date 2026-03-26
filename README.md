@@ -1,50 +1,86 @@
-# Welcome to your Expo app 👋
+<p align="center">
+   <img width="100%"  alt="Image" src="https://github.com/user-attachments/assets/1e97eb67-5f4b-4633-b1ad-53c690642c40" />
+</p>
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+# Pokedex
 
-1. Install dependencies
+A React Native mobile application built with Expo and TypeScript that allows you to explore Pokémon, view their details, and save your favorites.
 
+## Features
+
+- **Explore Pokémon:** Browse through a comprehensive list of Pokémon.
+- **Search Functionality:** Quickly find specific Pokémon using the search bar.
+- **Detailed Views:** View in-depth information, types, and stats for each Pokémon.
+- **Favorites System:** Save your favorite Pokémon for quick access later.
+- **Offline Caching:** Built-in support for caching data locally using SQLite to ensure smooth performance.
+- **Theming:** Support for custom themes, including both light and dark modes.
+- **Smooth Animations:** Fluid transitions and skeleton loading screens for a polished user experience.
+
+## Tech Stack
+
+- **Framework:** [React Native](https://reactnative.dev/) with [Expo](https://expo.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Navigation:** [Expo Router](https://docs.expo.dev/router/introduction/)
+- **Local Storage:** `expo-sqlite` and `@react-native-async-storage/async-storage`
+- **Animations:** [moti](https://github.com/nandorojo/moti) and [react-native-reanimated](https://github.com/software-mansion/react-native-reanimated)
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have [Node.js](https://nodejs.org/) installed along with a package manager like `npm` or `yarn` or `bun`.
+You will also need the Expo Go app on your physical device, or an Android/iOS emulator installed on your computer.
+
+### Installation
+
+1. Clone the repository and navigate to the project directory:
+
+   ```bash
+   cd Pokemon
+   ```
+
+2. Install the dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
+### Running the App
 
-   ```bash
-   npx expo start
-   ```
+Start the Expo development server:
+### Running the App
 
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+Start the Expo development server:
 
 ```bash
-npm run reset-project
+npx expo start
+```
+```bash
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+From here, you can:
 
-## Learn more
+- Press `a` to open the app on an Android emulator.
+- Press `i` to open the app on an iOS simulator.
+- Scan the QR code with the Expo Go app on your physical Android or iOS device.
+From here, you can:
 
-To learn more about developing your project with Expo, look at the following resources:
+- Press `a` to open the app on an Android emulator.
+- Press `i` to open the app on an iOS simulator.
+- Scan the QR code with the Expo Go app on your physical Android or iOS device.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project Structure
 
-## Join the community
+- `src/app/` - Contains the main routing logic and screens (Home, Favorites, Settings, Details).
+- `src/components/` - Reusable UI components like the SearchBar and PokeCard.
+- `src/context/` - Global state management, such as the ThemeContext.
+- `src/functions/` - Utility functions for API calls, local caching, and storage logic.
+- `src/interface/` - TypeScript definitions and interfaces for PokéAPI data.
+## Project Structure
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- `src/app/` - Contains the main routing logic and screens (Home, Favorites, Settings, Details).
+- `src/components/` - Reusable UI components like the SearchBar and PokeCard.
+- `src/context/` - Global state management, such as the ThemeContext.
+- `src/functions/` - Utility functions for API calls, local caching, and storage logic.
+- `src/interface/` - TypeScript definitions and interfaces for PokéAPI data.
