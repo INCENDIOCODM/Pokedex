@@ -13,7 +13,7 @@ import { GetAllFavourites } from "../../functions/FavouritePokemons";
 import { getCachedPokemonsByIds } from "../../functions/PokemonCacheDb";
 import { useTheme } from "@/src/context/ThemeContext";
 
-const Favorites = ({ refreshTrigger }: { refreshTrigger?: number }) => {
+const Favorites = () => {
 	const { colors } = useTheme();
 	const [favorites, setFavorites] = React.useState<any[]>([]);
 	const [loading, setLoading] = React.useState(true);
@@ -42,11 +42,6 @@ const Favorites = ({ refreshTrigger }: { refreshTrigger?: number }) => {
 			loadFavorites();
 		}, [loadFavorites]),
 	);
-
-	// Reload when refreshTrigger changes
-	React.useEffect(() => {
-		loadFavorites();
-	}, [refreshTrigger, loadFavorites]);
 
 	return (
 		<View style={[styles.container, { backgroundColor: colors.background }]}>
