@@ -59,7 +59,7 @@ const darkColors: ThemePalette = {
 	onAccent: "#ffffff",
 };
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 	const [theme, setThemeState] = useState<ThemeMode>("light");

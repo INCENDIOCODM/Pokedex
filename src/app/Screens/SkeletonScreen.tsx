@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from "react";
+import React, { memo, useMemo, useContext } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
 import { MotiView } from "moti";
 import {
@@ -6,6 +6,7 @@ import {
 	SkeletonBlockProps,
 } from "../../typings/SkeletonScreenTypes";
 import SearchBar from "@/src/components/SearchBar";
+import { ThemeContext } from "@/src/context/ThemeContext";
 
 const SkeletonBlock = memo(function SkeletonBlock({
 	width = "100%" as `${number}%`,
@@ -13,7 +14,8 @@ const SkeletonBlock = memo(function SkeletonBlock({
 	radius = 12,
 	style,
 	delay = 0,
-}: SkeletonBlockProps) {
+	baseColor = "#E6E6E6",
+}: SkeletonBlockProps & { baseColor?: string }) {
 	return (
 		<MotiView
 			from={{ opacity: 0.45 }}
@@ -25,29 +27,47 @@ const SkeletonBlock = memo(function SkeletonBlock({
 				repeatReverse: true,
 				delay,
 			}}
-			style={[{
-							width,
-							height,
-							borderRadius: radius,
-							backgroundColor: "#E6E6E6",
-							}, style
+			style={[
+				{
+					width,
+					height,
+					borderRadius: radius,
+					backgroundColor: baseColor,
+				},
+				style,
 			]}
 		/>
 	);
 });
 
-function HomeSkeleton({ rows, count }: Required<Pick<SkeletonScreenProps, "rows" | "count">>) {
+function HomeSkeleton({
+	rows,
+	count,
+}: Required<Pick<SkeletonScreenProps, "rows" | "count">>) {
+	const themeContext = useContext(ThemeContext);
+	const isDark = themeContext?.theme === "dark";
+	const colors = themeContext?.colors;
 	const cardBasis = rows === 2 ? "49%" : "95%";
 	const items = useMemo(
 		() => Array.from({ length: count }, (_, i) => i),
-		[count]
+		[count],
 	);
 
+	const skeletonColor = isDark ? "#333333" : "#E6E6E6";
+	const containerBg = isDark ? "#121212" : "#f5f5f5";
+	const countBg = isDark ? "#1f1f1f" : "#fff";
+	const cardBg = isDark ? "#1f1f1f" : "#fff";
+
 	return (
-		<View style={styles.container}>
+		<View style={[styles.container, { backgroundColor: containerBg }]}>
 			<SearchBar />
-			<View style={styles.countContainer}>
-				<SkeletonBlock width={110} height={16} radius={8} />
+			<View style={[styles.countContainer, { backgroundColor: countBg }]}>
+				<SkeletonBlock
+					width={110}
+					height={16}
+					radius={8}
+					baseColor={skeletonColor}
+				/>
 			</View>
 
 			<ScrollView
@@ -56,12 +76,13 @@ function HomeSkeleton({ rows, count }: Required<Pick<SkeletonScreenProps, "rows"
 				<View style={styles.grid}>
 					{items.map((i) => (
 						<View key={i} style={[styles.cardOuter, { flexBasis: cardBasis }]}>
-							<View style={styles.card}>
+							<View style={[styles.card, { backgroundColor: cardBg }]}>
 								<SkeletonBlock
 									width={150}
 									height={150}
 									radius={20}
 									delay={(i % 6) * 60}
+									baseColor={skeletonColor}
 									style={{ alignSelf: "center" }}
 								/>
 								<View style={{ height: 12 }} />
@@ -70,6 +91,7 @@ function HomeSkeleton({ rows, count }: Required<Pick<SkeletonScreenProps, "rows"
 									height={18}
 									radius={10}
 									delay={(i % 6) * 60 + 40}
+									baseColor={skeletonColor}
 									style={{ alignSelf: "center" }}
 								/>
 							</View>
@@ -82,31 +104,46 @@ function HomeSkeleton({ rows, count }: Required<Pick<SkeletonScreenProps, "rows"
 }
 
 function DetailSkeleton() {
+	const themeContext = useContext(ThemeContext);
+	const isDark = themeContext?.theme === "dark";
 	const screenWidth = Dimensions.get("window").width;
 	const imageSize = Math.min(260, screenWidth - 60);
 	const statRows = useMemo(() => [0, 1, 2, 3, 4], []);
 
+	const skeletonColor = isDark ? "#333333" : "#E6E6E6";
+	const detailBg = isDark ? "#121212" : "#f6f6f6";
+	const detailHeaderBg = isDark ? "#2a2a2a" : "#D9D9D9";
+	const detailSectionBg = isDark ? "#1f1f1f" : "#fff";
+	const aboutBoxBorder = isDark ? "#343434" : "#e6e6e6";
+	const statBg = isDark ? "#2a2a2a" : "#EFEFEF";
+
 	return (
 		<ScrollView
-			contentContainerStyle={styles.detailContainer}
+			contentContainerStyle={[
+				styles.detailContainer,
+				{ backgroundColor: detailBg },
+			]}
 			showsVerticalScrollIndicator={false}>
-			<View style={styles.detailHeader}>
+			<View style={[styles.detailHeader, { backgroundColor: detailHeaderBg }]}>
 				<SkeletonBlock
 					width={36}
 					height={36}
 					radius={12}
+					baseColor={skeletonColor}
 					style={{ position: "absolute", left: 12, top: 48 }}
 				/>
 				<SkeletonBlock
 					width={180}
 					height={26}
 					radius={10}
+					baseColor={skeletonColor}
 					style={{ marginTop: 52 }}
 				/>
 				<SkeletonBlock
 					width={60}
 					height={18}
 					radius={9}
+					baseColor={skeletonColor}
 					style={{ position: "absolute", right: 12, top: 56 }}
 				/>
 			</View>
@@ -117,28 +154,55 @@ function DetailSkeleton() {
 						width={imageSize}
 						height={imageSize}
 						radius={22}
+						baseColor={skeletonColor}
 						style={{ alignSelf: "center" }}
 					/>
 					<View style={{ height: 10 }} />
 					<View
 						style={{ flexDirection: "row", justifyContent: "center", gap: 10 }}>
-						<SkeletonBlock width={90} height={28} radius={16} />
-						<SkeletonBlock width={90} height={28} radius={16} delay={50} />
+						<SkeletonBlock
+							width={90}
+							height={28}
+							radius={16}
+							baseColor={skeletonColor}
+						/>
+						<SkeletonBlock
+							width={90}
+							height={28}
+							radius={16}
+							delay={50}
+							baseColor={skeletonColor}
+						/>
 					</View>
 				</View>
 
-				<View style={styles.detailSection}>
+				<View
+					style={[styles.detailSection, { backgroundColor: detailSectionBg }]}>
 					<View style={{ alignItems: "center" }}>
-						<SkeletonBlock width={90} height={20} radius={10} />
+						<SkeletonBlock
+							width={90}
+							height={20}
+							radius={10}
+							baseColor={skeletonColor}
+						/>
 					</View>
 					<View style={styles.aboutRow}>
 						{[0, 1, 2].map((i) => (
-							<View key={i} style={styles.aboutBox}>
+							<View
+								key={i}
+								style={[
+									styles.aboutBox,
+									{
+										backgroundColor: detailSectionBg,
+										borderColor: aboutBoxBorder,
+									},
+								]}>
 								<SkeletonBlock
 									width={40}
 									height={12}
 									radius={6}
 									delay={i * 40}
+									baseColor={skeletonColor}
 									style={{ alignSelf: "center" }}
 								/>
 								<View style={{ height: 10 }} />
@@ -147,6 +211,7 @@ function DetailSkeleton() {
 									height={18}
 									radius={9}
 									delay={i * 40 + 50}
+									baseColor={skeletonColor}
 									style={{ alignSelf: "center" }}
 								/>
 							</View>
@@ -154,33 +219,53 @@ function DetailSkeleton() {
 					</View>
 				</View>
 
-				<View style={styles.detailSection}>
+				<View
+					style={[styles.detailSection, { backgroundColor: detailSectionBg }]}>
 					<View style={{ alignItems: "center" }}>
-						<SkeletonBlock width={70} height={20} radius={10} />
+						<SkeletonBlock
+							width={70}
+							height={20}
+							radius={10}
+							baseColor={skeletonColor}
+						/>
 					</View>
 					<View style={{ height: 10 }} />
 					{statRows.map((i) => (
 						<View key={i} style={styles.statRow}>
-							<SkeletonBlock width={80} height={14} radius={8} delay={i * 35} />
+							<SkeletonBlock
+								width={80}
+								height={14}
+								radius={8}
+								delay={i * 35}
+								baseColor={skeletonColor}
+							/>
 							<SkeletonBlock
 								width="55%"
 								height={12}
 								radius={8}
 								delay={i * 35 + 25}
-								style={{ backgroundColor: "#EFEFEF" }}
+								baseColor={statBg}
+								style={{ backgroundColor: statBg }}
 							/>
 							<SkeletonBlock
 								width={28}
 								height={14}
 								radius={8}
 								delay={i * 35 + 40}
+								baseColor={skeletonColor}
 							/>
 						</View>
 					))}
 				</View>
 
-				<View style={styles.detailSection}>
-					<SkeletonBlock width={90} height={20} radius={10} />
+				<View
+					style={[styles.detailSection, { backgroundColor: detailSectionBg }]}>
+					<SkeletonBlock
+						width={90}
+						height={20}
+						radius={10}
+						baseColor={skeletonColor}
+					/>
 					<View style={{ height: 10 }} />
 					<View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
 						{[0, 1, 2].map((i) => (
@@ -190,6 +275,7 @@ function DetailSkeleton() {
 								height={28}
 								radius={14}
 								delay={i * 50}
+								baseColor={skeletonColor}
 							/>
 						))}
 					</View>
@@ -343,5 +429,5 @@ const styles = StyleSheet.create({
 		justifyContent: "space-between",
 		gap: 10,
 		marginVertical: 6,
-	}
+	},
 });
