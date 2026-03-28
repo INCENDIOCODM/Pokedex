@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { useTheme } from "@/src/context/ThemeContext";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 
 export default function TabLayout() {
 	const { colors } = useTheme();
@@ -25,12 +25,22 @@ export default function TabLayout() {
 					),
 				}}
 			/>
+				<Tabs.Screen
+					name="camera"
+					options={{
+						title: "Camera",
+						tabBarIcon: ({ color, size }) => (
+							<Ionicons name="camera" size={size} color={color} />
+						),
+					}}
+					
+				/>
 			<Tabs.Screen
 				name="favorites"
 				options={{
 					title: "Favorites",
 					tabBarIcon: ({ color, size }) => (
-						<Ionicons name="heart" size={size} color={color} />
+						<MaterialIcons name="catching-pokemon" size={size} color={color} />
 					),
 				}}
 			/>
