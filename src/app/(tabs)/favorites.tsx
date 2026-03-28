@@ -1,5 +1,5 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { useFocusEffect } from "@react-navigation/core";
+import { useFocusEffect } from "expo-router";
 import React from "react";
 import {
 	ActivityIndicator,
@@ -12,6 +12,7 @@ import PokeCard from "../../components/pokeCard";
 import { GetAllFavourites } from "../../functions/FavouritePokemons";
 import { getCachedPokemonsByIds } from "../../functions/PokemonCacheDb";
 import { useTheme } from "@/src/context/ThemeContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Favorites = () => {
 	const { colors } = useTheme();
@@ -44,7 +45,7 @@ const Favorites = () => {
 	);
 
 	return (
-		<View style={[styles.container, { backgroundColor: colors.background }]}>
+		<SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
 			{/* Count Badge */}
 			<View
 				style={[
@@ -85,16 +86,14 @@ const Favorites = () => {
 					key={"favorites-list"}
 				/>
 			)}
-		</View>
+		</SafeAreaView>
 	);
 };
 
 export default Favorites;
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
+	container: {},
 	countContainer: {
 		paddingHorizontal: 16,
 		paddingVertical: 8,
