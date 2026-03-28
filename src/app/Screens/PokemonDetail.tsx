@@ -347,9 +347,6 @@ const styles = StyleSheet.create({
 		textTransform: "capitalize",
 	},
 	headerId: {
-		position: "absolute",
-		right: 12,
-		top: 52,
 		color: "#fff",
 		fontWeight: "600",
 	},
@@ -357,12 +354,13 @@ const styles = StyleSheet.create({
 		position: "absolute",
 		right: 12,
 		top: 48,
+		flexDirection: "row",
 		alignItems: "center",
-		gap: 4,
+		gap: 2,
 	},
 	favoriteButton: {
-		padding: 8,
-		marginBottom: 4,
+		padding: 5,
+		marginRight: 2,
 	},
 	cardArea: { marginTop: -40, paddingHorizontal: 20, position: "relative" },
 	image: {
