@@ -18,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import Grid from "@/src/components/Grid";
 import CameraResult from "../Screens/CameraResult";
+import ImageCaptureResult from "../Screens/ImageCaptureResult";
 
 export default function Camera() {
 	const cameraRef = useRef<CameraView | null>(null);
@@ -27,6 +28,7 @@ export default function Camera() {
 	const [isCapturing, setIsCapturing] = useState(false);
 	const [showGrid, setShowGrid] = useState(false);
 	const [photoUri, setPhotoUri] = useState<string | null>(null);
+	const [analysisUri, setAnalysisUri] = useState<string | null>(null);
 
 	if (!permission) {
 		return <View />;
@@ -69,17 +71,24 @@ export default function Camera() {
 		}
 	}
 
+	if (analysisUri) {
+		return (
+			<ImageCaptureResult
+				photoUri={analysisUri}
+				onBackToPreview={() => setAnalysisUri(null)}
+			/>
+		);
+	}
+
 	if (photoUri) {
 		return (
 			<CameraResult
 				photoUri={photoUri}
 				onRetake={() => setPhotoUri(null)}
-				onUsePhoto={() =>
-					Alert.alert(
-						"Photo selected",
-						"Use photo action is ready for your next feature.",
-					)
-				}
+				onUsePhoto={() => {
+					setAnalysisUri(photoUri);
+					setPhotoUri(null);
+				}}
 			/>
 		);
 	}

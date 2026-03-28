@@ -9,11 +9,13 @@ import {
 	StyleSheet,
 	Switch,
 	Text,
+	TextInput,
 	View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { clearCache } from "@/src/functions/PokemonCacheDb";
 import { THEME_STORAGE_KEY, useTheme } from "@/src/context/ThemeContext";
+import { OPENROUTER_API_KEY_STORAGE_KEY } from "@/src/functions/OpenRouterAPI";
 
 const LIST_VIEW_STORAGE_KEY = "ListView";
 const LAST_CACHE_CLEAR_AT_KEY = "CACHE_LAST_CLEARED_AT";
@@ -22,9 +24,10 @@ const Settings = () => {
 	const router = useRouter();
 	const { theme, setTheme, colors } = useTheme();
 	const [busyAction, setBusyAction] = useState<
-		null | "all" | "images" | "list"
+		null | "all" | "images" | "list" | "saveKey"
 	>(null);
 	const [lastClearedAt, setLastClearedAt] = useState<string | null>(null);
+	const [openRouterKey, setOpenRouterKey] = useState("");
 
 	useEffect(() => {
 		const loadLastClearedAt = async () => {
@@ -36,8 +39,43 @@ const Settings = () => {
 			}
 		};
 
+		const loadOpenRouterKey = async () => {
+			try {
+				const value = await AsyncStorage.getItem(
+					OPENROUTER_API_KEY_STORAGE_KEY,
+				);
+				if (value) {
+					setOpenRouterKey(value);
+				}
+			} catch (error) {
+				console.warn("Failed to load OpenRouter key", error);
+			}
+		};
+
 		loadLastClearedAt();
+		loadOpenRouterKey();
 	}, []);
+
+	const saveOpenRouterKey = useCallback(async () => {
+		setBusyAction("saveKey");
+		try {
+			const trimmed = openRouterKey.trim();
+			if (!trimmed) {
+				await AsyncStorage.removeItem(OPENROUTER_API_KEY_STORAGE_KEY);
+				Alert.alert("Key Removed", "OpenRouter API key has been removed.");
+				return;
+			}
+
+			await AsyncStorage.setItem(OPENROUTER_API_KEY_STORAGE_KEY, trimmed);
+			setOpenRouterKey(trimmed);
+			Alert.alert("Saved", "OpenRouter API key saved successfully.");
+		} catch (error) {
+			console.error("Failed to save OpenRouter key", error);
+			Alert.alert("Error", "Could not save OpenRouter API key.");
+		} finally {
+			setBusyAction(null);
+		}
+	}, [openRouterKey]);
 
 	const persistLastClearedAt = useCallback(async () => {
 		const now = new Date().toISOString();
@@ -63,7 +101,10 @@ const Settings = () => {
 
 			const keys = await AsyncStorage.getAllKeys();
 			const removable = keys.filter(
-				(key) => key !== THEME_STORAGE_KEY && key !== LAST_CACHE_CLEAR_AT_KEY,
+				(key) =>
+					key !== THEME_STORAGE_KEY &&
+					key !== LAST_CACHE_CLEAR_AT_KEY &&
+					key !== OPENROUTER_API_KEY_STORAGE_KEY,
 			);
 			if (removable.length) {
 				await AsyncStorage.multiRemove(removable);
@@ -235,6 +276,57 @@ const Settings = () => {
 					styles.card,
 					{ backgroundColor: colors.surface, borderColor: colors.border },
 				]}>
+				<Text style={[styles.sectionTitle, { color: colors.text }]}>
+					OpenRouter
+				</Text>
+				<Text style={[styles.sectionHint, { color: colors.mutedText }]}>
+					Set your OpenRouter API key used by camera identification.
+				</Text>
+
+				<TextInput
+					value={openRouterKey}
+					onChangeText={setOpenRouterKey}
+					placeholder="sk-or-v1-..."
+					placeholderTextColor={colors.mutedText}
+					autoCapitalize="none"
+					autoCorrect={false}
+					style={[
+						styles.keyInput,
+						{
+							color: colors.text,
+							borderColor: colors.border,
+							backgroundColor: colors.surfaceAlt,
+						},
+					]}
+				/>
+
+				<Pressable
+					disabled={busyAction !== null}
+					style={({ pressed }) => [
+						styles.primaryAction,
+						{ backgroundColor: colors.accent },
+						pressed && styles.primaryActionPressed,
+						busyAction !== null && styles.disabled,
+					]}
+					onPress={() => {
+						void saveOpenRouterKey();
+					}}>
+					{busyAction === "saveKey" ? (
+						<ActivityIndicator color={colors.onAccent} />
+					) : (
+						<Text
+							style={[styles.primaryActionText, { color: colors.onAccent }]}>
+							Save API key
+						</Text>
+					)}
+				</Pressable>
+			</View>
+
+			<View
+				style={[
+					styles.card,
+					{ backgroundColor: colors.surface, borderColor: colors.border },
+				]}>
 				<Text style={[styles.sectionTitle, { color: colors.text }]}>Extra</Text>
 				<Text style={[styles.sectionHint, { color: colors.mutedText }]}>
 					Useful quick reset for your home list view style
@@ -346,6 +438,13 @@ const styles = StyleSheet.create({
 	secondaryActionText: {
 		fontWeight: "600",
 		fontSize: 15,
+	},
+	keyInput: {
+		height: 46,
+		borderRadius: 10,
+		borderWidth: 1,
+		paddingHorizontal: 12,
+		marginBottom: 10,
 	},
 	tertiaryAction: {
 		height: 46,
