@@ -227,7 +227,7 @@ export default function PokemonDetails() {
 								Height
 							</Text>
 							<Text style={[styles.aboutBoxValue, { color: colors.text }]}>
-								{pokemon.height ?? "—"}
+								{(pokemon.height / 10).toFixed(1)} m
 							</Text>
 						</View>
 						<View
@@ -242,7 +242,7 @@ export default function PokemonDetails() {
 								Weight
 							</Text>
 							<Text style={[styles.aboutBoxValue, { color: colors.text }]}>
-								{pokemon.weight ?? "—"}
+								{(pokemon.weight / 10).toFixed(1)} kg
 							</Text>
 						</View>
 					</View>

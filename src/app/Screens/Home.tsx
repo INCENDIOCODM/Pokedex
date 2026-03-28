@@ -19,14 +19,12 @@ const Home = ({
 	rows,
 	loadingMore,
 	setRows,
-	onFavoriteChange,
 }: any) => {
 	const router = useRouter();
 	const { colors } = useTheme();
 	const [searchQuery, setSearchQuery] = useState("");
 
 	const normalizedRows: 1 | 2 = Number(rows) === 1 ? 1 : 2;
-	const isInitialLoading = !Array.isArray(pokemons) || pokemons.length === 0;
 
 	const filteredPokemons = pokemons.filter((pokemon: any) =>
 		pokemon.name.toLowerCase().includes(searchQuery.toLowerCase()),
@@ -89,9 +87,7 @@ const Home = ({
 export default Home;
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-	},
+	container: {},
 	countContainer: {
 		paddingHorizontal: 16,
 		paddingVertical: 8,
