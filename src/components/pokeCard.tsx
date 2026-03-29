@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { Image } from "expo-image";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import typeColors from "./Pokemontype/poketype";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import {
 	CheckIfFavourite,
@@ -16,24 +16,42 @@ type PokeCardProps = {
 	pokemon: PokemonAPI;
 	Rows: number;
 	onFavoriteChange?: () => void;
+	onPress?: () => void;
+	disableNavigation?: boolean;
+	showFavoriteButton?: boolean;
 };
 
-const PokeCard = ({ pokemon, Rows, onFavoriteChange }: PokeCardProps) => {
+const PokeCard = ({
+	pokemon,
+	Rows,
+	onFavoriteChange,
+	onPress,
+	disableNavigation = false,
+	showFavoriteButton = true,
+}: PokeCardProps) => {
 	const router = useRouter();
 	const { name, sprites, types, stats } = pokemon;
 	const [isFavorite, setIsFavorite] = useState(false);
 	const [loading, setLoading] = useState(false);
 
-	useEffect(() => {
-		checkFavoriteStatus();
-	}, [pokemon.id]);
-
-	const checkFavoriteStatus = async () => {
+	const checkFavoriteStatus = useCallback(async () => {
 		const status = await CheckIfFavourite(pokemon.id);
 		setIsFavorite(status);
-	};
+	}, [pokemon.id]);
+
+	useEffect(() => {
+		if (!showFavoriteButton) {
+			return;
+		}
+
+		void checkFavoriteStatus();
+	}, [checkFavoriteStatus, showFavoriteButton]);
 
 	const handleToggleFavorite = async (e: any) => {
+		if (!showFavoriteButton) {
+			return;
+		}
+
 		e.stopPropagation();
 		setLoading(true);
 		try {
@@ -70,6 +88,15 @@ const PokeCard = ({ pokemon, Rows, onFavoriteChange }: PokeCardProps) => {
 	return (
 		<Pressable
 			onPress={() => {
+				if (onPress) {
+					onPress();
+					return;
+				}
+
+				if (disableNavigation) {
+					return;
+				}
+
 				// requestAnimationFrame to allow UI to respond before navigation
 				requestAnimationFrame(() => {
 					try {
@@ -91,17 +118,19 @@ const PokeCard = ({ pokemon, Rows, onFavoriteChange }: PokeCardProps) => {
 						backgroundColor: bg,
 					},
 				]}>
-				{/* Like Button */}
-				<Pressable
-					onPress={handleToggleFavorite}
-					disabled={loading}
-					style={styles.likeButton}>
-					<Ionicons
-						name={isFavorite ? "heart" : "heart-outline"}
-						size={20}
-						color={isFavorite ? "#ff4757" : "#fff"}
-					/>
-				</Pressable>
+				{showFavoriteButton ? (
+					/* Like Button */
+					<Pressable
+						onPress={handleToggleFavorite}
+						disabled={loading}
+						style={styles.likeButton}>
+						<Ionicons
+							name={isFavorite ? "heart" : "heart-outline"}
+							size={20}
+							color={isFavorite ? "#ff4757" : "#fff"}
+						/>
+					</Pressable>
+				) : null}
 
 				{isDetailRow ? (
 					<View style={styles.detailWrap}>

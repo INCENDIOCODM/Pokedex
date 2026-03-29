@@ -208,6 +208,31 @@ export const getCachedPokemonsByIds = async (
 		.filter((entry): entry is CachedPokemon => Boolean(entry));
 };
 
+export const getRandomCachedPokemon = async (
+	excludeId?: number,
+): Promise<CachedPokemon | null> => {
+	await initPokemonCacheDb();
+
+	const row = excludeId
+		? (db.getFirstSync(
+				"SELECT id, payload_json, updated_at FROM pokemon_cache WHERE id != ? ORDER BY RANDOM() LIMIT 1",
+				excludeId,
+			) as PokemonRow | null)
+		: (db.getFirstSync(
+				"SELECT id, payload_json, updated_at FROM pokemon_cache ORDER BY RANDOM() LIMIT 1",
+			) as PokemonRow | null);
+
+	if (!row) return null;
+
+	const pokemon = safeJsonParse<PokemonAPI>(row.payload_json);
+	if (!pokemon) return null;
+
+	return {
+		pokemon,
+		updatedAt: row.updated_at,
+	};
+};
+
 export const upsertPokemon = async (
 	pokemon: PokemonAPI,
 	updatedAt: number,
@@ -273,6 +298,32 @@ export const getFavoriteIds = async (): Promise<number[]> => {
 		"SELECT id FROM favorites ORDER BY added_at DESC",
 	) as FavoriteRow[];
 	return rows.map((row) => row.id);
+};
+
+export const getFavoritePokemonsFromCache = async (): Promise<
+	CachedPokemon[]
+> => {
+	await initPokemonCacheDb();
+
+	const rows = db.getAllSync(
+		`SELECT p.id, p.payload_json, p.updated_at
+		 FROM favorites f
+		 INNER JOIN pokemon_cache p ON p.id = f.id
+		 ORDER BY f.added_at DESC`,
+	) as PokemonRow[];
+
+	const results: CachedPokemon[] = [];
+	for (const row of rows) {
+		const pokemon = safeJsonParse<PokemonAPI>(row.payload_json);
+		if (pokemon) {
+			results.push({
+				pokemon,
+				updatedAt: row.updated_at,
+			});
+		}
+	}
+
+	return results;
 };
 
 export const toggleFavorite = async (pokemonId: number): Promise<boolean> => {

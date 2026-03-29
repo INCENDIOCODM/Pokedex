@@ -25,22 +25,30 @@ export default function TabLayout() {
 					),
 				}}
 			/>
-				<Tabs.Screen
-					name="camera"
-					options={{
-						title: "Camera",
-						tabBarIcon: ({ color, size }) => (
-							<Ionicons name="camera" size={size} color={color} />
-						),
-					}}
-					
-				/>
+			<Tabs.Screen
+				name="camera"
+				options={{
+					title: "Camera",
+					tabBarIcon: ({ color, size }) => (
+						<Ionicons name="camera" size={size} color={color} />
+					),
+				}}
+			/>
 			<Tabs.Screen
 				name="favorites"
 				options={{
 					title: "Favorites",
 					tabBarIcon: ({ color, size }) => (
 						<MaterialIcons name="catching-pokemon" size={size} color={color} />
+					),
+				}}
+			/>
+			<Tabs.Screen
+				name="battle"
+				options={{
+					title: "Battle",
+					tabBarIcon: ({ color, size }) => (
+						<Ionicons name="flame" size={size} color={color} />
 					),
 				}}
 			/>
