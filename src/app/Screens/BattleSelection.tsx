@@ -66,24 +66,26 @@ const BattleSelection = () => {
 					</Text>
 				</View>
 
-        {/* Right Side Options */}
-				<TouchableOpacity
-					onPress={() => {
-						router.push("../Screens/BattleHistory");
-					}}
-					style={[styles.historyButton, { backgroundColor: colors.accent }]}>
-					<Ionicons name="time-outline" size={16} color="white" />
-				</TouchableOpacity>
-				<TouchableOpacity
-					onPress={() => {
-						void loadFavorites();
-					}}
-					style={[
-						styles.historyButton,
-						{ backgroundColor: colors.accent, marginLeft: 8 },
-					]}>
-					<Ionicons name="refresh-sharp" size={16} color="white" />
-				</TouchableOpacity>
+				{/* Right Side Options */}
+				<View style={styles.headerRight}>
+					<TouchableOpacity
+						onPress={() => {
+							router.push("../Screens/BattleHistory");
+						}}
+						style={[styles.historyButton, { backgroundColor: colors.accent }]}>
+						<Ionicons name="time-outline" size={16} color="white" />
+					</TouchableOpacity>
+					<TouchableOpacity
+						onPress={() => {
+							void loadFavorites();
+						}}
+						style={[
+							styles.RefreshButton,
+							{ backgroundColor: colors.accent, marginLeft: 8 },
+						]}>
+						<Ionicons name="refresh-sharp" size={16} color="white" />
+					</TouchableOpacity>
+				</View>
 			</View>
 
 			{loading ? (
@@ -160,6 +162,10 @@ const styles = StyleSheet.create({
 		alignItems: "center",
 		gap: 8,
 	},
+	headerRight: {
+		flexDirection: "row",
+		alignItems: "center",
+	},
 	headerTitle: {
 		fontSize: 20,
 		fontWeight: "700",
@@ -206,9 +212,18 @@ const styles = StyleSheet.create({
 		fontSize: 14,
 	},
 	historyButton: {
-		padding: 8,
-		borderRadius: 8,
+		padding: 15,
+		borderRadius: 20,
+		borderTopRightRadius: 0,
+		borderBottomRightRadius: 0,
 	},
+	RefreshButton: {
+		padding: 15,
+		borderRadius: 20,
+		borderTopLeftRadius: 0,
+		borderBottomLeftRadius: 0,
+	},
+
 	listContent: {
 		paddingHorizontal: 8,
 		paddingVertical: 8,
