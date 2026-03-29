@@ -199,7 +199,7 @@ async function identifyWithOpenRouter(
 				{
 					role: "system",
 					content:
-						"You are a Pokemon identification assistant. Respond with strict JSON only.",
+						"You are a Pokemon identification assistant. Respond with strict JSON only. Do not include any explanations outside the JSON. If you don't know the answer, respond with null for the pokemonName field. Always respond in the following JSON format: { pokemonName: string, confidence: number (0-100), type: string (the Pokemon's primary type), reasoning: string (a short explanation of how you arrived at your conclusion) }.",
 				},
 				{
 					role: "user",
