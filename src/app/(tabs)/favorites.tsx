@@ -1,13 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useFocusEffect } from "expo-router";
 import React from "react";
-import {
-	ActivityIndicator,
-	FlatList,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { LegendList } from "@legendapp/list";
 import PokeCard from "../../components/pokeCard";
 import { GetAllFavourites } from "../../functions/FavouritePokemons";
 import { getCachedPokemonsByIds } from "../../functions/PokemonCacheDb";
@@ -77,14 +72,16 @@ const Favorites = () => {
 					</Text>
 				</View>
 			) : (
-				<FlatList
+				<LegendList
 					data={favorites}
 					keyExtractor={(item) => item.id.toString()}
 					contentContainerStyle={styles.listContent}
 					renderItem={({ item }) => <PokeCard pokemon={item} Rows={2} />}
 					numColumns={2}
 					scrollIndicatorInsets={{ right: 1 }}
-					key={"favorites-list"}
+					estimatedItemSize={200}
+					recycleItems
+					showsVerticalScrollIndicator={false}
 				/>
 			)}
 		</SafeAreaView>
