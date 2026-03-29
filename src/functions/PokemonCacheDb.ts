@@ -285,3 +285,30 @@ export const toggleFavorite = async (pokemonId: number): Promise<boolean> => {
 		return true;
 	}
 };
+
+export const searchCachedPokemonByName = async (
+	searchTerm: string,
+): Promise<CachedPokemon[]> => {
+	await initPokemonCacheDb();
+
+	const term = `%${searchTerm.toLowerCase()}%`;
+	const rows = db.getAllSync(
+		`SELECT id, payload_json, updated_at FROM pokemon_cache
+		 WHERE LOWER(name) LIKE ?
+		 ORDER BY name ASC`,
+		term,
+	) as PokemonRow[];
+
+	const results: CachedPokemon[] = [];
+	for (const row of rows) {
+		const pokemon = safeJsonParse<PokemonAPI>(row.payload_json);
+		if (pokemon) {
+			results.push({
+				pokemon,
+				updatedAt: row.updated_at,
+			});
+		}
+	}
+
+	return results;
+};

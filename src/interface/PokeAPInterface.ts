@@ -5,7 +5,17 @@ interface PokemonAPI {
 	weight: number;
 	height: number;
 	base_experience: number;
-
+	order: number;
+	is_default?: boolean;
+	species?: {
+		name: string;
+		url: string;
+	};
+	forms?: { name: string; url: string }[];
+	cries?: {
+		latest?: string | null;
+		legacy?: string | null;
+	};
 
 	sprites: {
 		front_default: string | null;
@@ -14,12 +24,20 @@ interface PokemonAPI {
 			"official-artwork"?: {
 				front_default: string | null;
 			};
+			dream_world?: {
+				front_default?: string | null;
+			};
 		};
 	};
 
-	abilities: { ability: { name: string } }[];
+	abilities: {
+		ability: { name: string };
+		is_hidden?: boolean;
+		slot?: number;
+	}[];
 	types: { type: { name: string } }[];
 	stats: { base_stat: number; stat: { name: string } }[];
+	moves: { move: { name: string; url: string } }[];
 }
 
 export interface PokemonListAPI {

@@ -3,6 +3,7 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "@/src/context/ThemeContext";
 
 type CameraResultProps = {
 	photoUri: string;
@@ -15,35 +16,53 @@ const CameraResult = ({
 	onRetake,
 	onUsePhoto,
 }: CameraResultProps) => {
+	const { colors, theme } = useTheme();
+	const secondaryButtonBg =
+		theme === "dark" ? "rgba(239, 83, 80, 0.28)" : "rgba(239, 83, 80, 0.16)";
+	const primaryButtonBg = theme === "dark" ? "#8EF3CE" : "#6BE7BA";
+
 	if (!photoUri) {
 		return (
-			<View style={styles.emptyContainer}>
+			<View
+				style={[styles.emptyContainer, { backgroundColor: colors.background }]}>
 				<TouchableOpacity
-					style={styles.actionButtonSecondary}
+					style={[
+						styles.actionButtonSecondary,
+						{ backgroundColor: secondaryButtonBg },
+					]}
 					onPress={onRetake}>
-					<Ionicons name="arrow-back" size={18} color="#FFFFFF" />
-					<Text style={styles.actionText}>Go back</Text>
+					<Ionicons name="arrow-back" size={18} color={colors.text} />
+					<Text style={[styles.actionText, { color: colors.text }]}>
+						Go back
+					</Text>
 				</TouchableOpacity>
 			</View>
 		);
 	}
 
 	return (
-		<View style={styles.previewContainer}>
+		<View
+			style={[styles.previewContainer, { backgroundColor: colors.background }]}>
 			<Image source={{ uri: photoUri }} style={styles.previewImage} />
 
 			<SafeAreaView style={styles.previewActions}>
 				<View style={styles.previewButtonsRow}>
 					<TouchableOpacity
-						style={styles.actionButtonSecondary}
+						style={[
+							styles.actionButtonSecondary,
+							{ backgroundColor: secondaryButtonBg },
+						]}
 						onPress={onRetake}>
-						<Ionicons name="refresh" size={50} color="#d95151" />
+						<Ionicons name="refresh" size={50} color={colors.accentStrong} />
 					</TouchableOpacity>
 
 					<TouchableOpacity
-						style={styles.actionButtonPrimary}
+						style={[
+							styles.actionButtonPrimary,
+							{ backgroundColor: primaryButtonBg },
+						]}
 						onPress={onUsePhoto}>
-						<Ionicons name="checkmark-circle" size={50} color="#001E3D" />
+						<Ionicons name="checkmark-circle" size={50} color="#083A2E" />
 					</TouchableOpacity>
 				</View>
 			</SafeAreaView>
@@ -56,7 +75,6 @@ export default CameraResult;
 const styles = StyleSheet.create({
 	previewContainer: {
 		flex: 1,
-		backgroundColor: "#000000",
 	},
 	previewImage: {
 		marginTop: "10%",
@@ -94,7 +112,6 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 		width: 100,
 		height: 100,
-		backgroundColor: "rgba(180, 12, 12, 0.48)",
 		paddingVertical: 12,
 		justifyContent: "center",
 		alignItems: "center",
@@ -105,14 +122,12 @@ const styles = StyleSheet.create({
 		borderRadius: 100,
 		width: 100,
 		height: 100,
-		backgroundColor: "#A8FFE0",
 		justifyContent: "center",
 		alignItems: "center",
 		flexDirection: "row",
 		gap: 6,
 	},
 	actionText: {
-		color: "#FFFFFF",
 		fontWeight: "700",
 	},
 	actionTextPrimary: {
@@ -121,7 +136,6 @@ const styles = StyleSheet.create({
 	},
 	emptyContainer: {
 		flex: 1,
-		backgroundColor: "#0A121D",
 		justifyContent: "center",
 		alignItems: "center",
 		paddingHorizontal: 24,
