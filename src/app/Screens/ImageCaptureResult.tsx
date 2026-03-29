@@ -12,6 +12,7 @@ import { Image } from "expo-image";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { useTheme } from "@/src/context/ThemeContext";
 import {
 	identifyPokemonWithGemini,
 	identifyPokemonWithGrok,
@@ -37,10 +38,20 @@ const ImageCaptureResult = ({
 	onBackToPreview,
 }: ImageCaptureResultProps) => {
 	const router = useRouter();
+	const { colors, theme } = useTheme();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [result, setResult] = useState<ProviderResult | null>(null);
 	const [detailsLoading, setDetailsLoading] = useState(false);
+
+	const panelBg = colors.surface;
+	const panelAltBg = colors.surfaceAlt;
+	const imageFrameBg =
+		theme === "dark" ? "rgba(255,255,255,0.05)" : "rgba(0,0,0,0.02)";
+	const softTint =
+		theme === "dark" ? "rgba(239,83,80,0.12)" : "rgba(239,83,80,0.08)";
+	const secondaryButtonBg =
+		theme === "dark" ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
 
 	useEffect(() => {
 		let cancelled = false;
@@ -124,55 +135,100 @@ const ImageCaptureResult = ({
 	const ResultCard = ({ result }: { result: ProviderResult | null }) => {
 		if (!result) {
 			return (
-				<View style={[styles.resultCard, styles.resultCardMuted]}>
-					<Text style={styles.resultProvider}>Unavailable</Text>
-					<Text style={styles.resultName}>No response</Text>
+				<View
+					style={[
+						styles.resultCard,
+						styles.resultCardMuted,
+						{ backgroundColor: panelBg, borderColor: colors.border },
+					]}>
+					<Text style={[styles.resultProvider, { color: colors.mutedText }]}>
+						Unavailable
+					</Text>
+					<Text style={[styles.resultName, { color: colors.text }]}>
+						No response
+					</Text>
 				</View>
 			);
 		}
 
 		return (
-			<View style={styles.resultCard}>
+			<View
+				style={[
+					styles.resultCard,
+					{ backgroundColor: panelBg, borderColor: colors.border },
+				]}>
 				<Text style={[styles.resultProvider, { color: result.color }]}>
 					{result.provider}
 				</Text>
-				<Text style={styles.resultName}>{result.pokemonName}</Text>
-				<Text style={styles.resultConfidence}>
+				<Text style={[styles.resultName, { color: colors.text }]}>
+					{result.pokemonName}
+				</Text>
+				<Text style={[styles.resultConfidence, { color: colors.mutedText }]}>
 					Confidence: {result.confidence ?? "N/A"}
 					{typeof result.confidence === "number" ? "%" : ""}
 				</Text>
-				<Text style={styles.resultReasoning}>{result.reasoning}</Text>
+				<Text style={[styles.resultReasoning, { color: colors.mutedText }]}>
+					{result.reasoning}
+				</Text>
 			</View>
 		);
 	};
 
 	return (
-		<SafeAreaView style={styles.container}>
+		<SafeAreaView
+			style={[styles.container, { backgroundColor: colors.background }]}>
 			<ScrollView contentContainerStyle={styles.content}>
-				<View style={styles.imageWrapper}>
+				<View
+					style={[
+						styles.imageWrapper,
+						{
+							backgroundColor: imageFrameBg,
+							borderColor: colors.border,
+						},
+					]}>
 					<Image source={{ uri: photoUri }} style={styles.imagePreview} />
 				</View>
 
-				<Text style={styles.title}>Pokemon Identification</Text>
+				<View style={styles.titleWrap}>
+					<Text style={[styles.title, { color: colors.text }]}>
+						Pokemon Identification
+					</Text>
+					<Text style={[styles.subtitle, { color: colors.mutedText }]}>
+						AI-powered result with provider fallback
+					</Text>
+				</View>
 
 				{loading ? (
-					<View style={styles.loadingBox}>
-						<ActivityIndicator size="large" color="#A8FFE0" />
-						<Text style={styles.loadingText}>
+					<View
+						style={[
+							styles.loadingBox,
+							{ backgroundColor: panelAltBg, borderColor: colors.border },
+						]}>
+						<ActivityIndicator size="large" color={colors.accent} />
+						<Text style={[styles.loadingText, { color: colors.mutedText }]}>
 							Analyzing with Gemini (Grok as fallback)...
 						</Text>
 					</View>
 				) : (
 					<>
-						{error ? <Text style={styles.errorText}>{error}</Text> : null}
+						{error ? (
+							<Text style={[styles.errorText, { color: colors.danger }]}>
+								{error}
+							</Text>
+						) : null}
 
 						{result && (
 							<View
-								style={[styles.winnerCard, { backgroundColor: result.color }]}>
-								<Text style={styles.winnerLabel}>
+								style={[
+									styles.winnerCard,
+									{ backgroundColor: result.color || colors.accent },
+								]}>
+								<Text style={[styles.winnerLabel, { color: "#1b1b1b" }]}>
 									Best Guess ({result.provider})
 								</Text>
-								<Text style={styles.winnerName}>{result.pokemonName}</Text>
+								<Text style={[styles.winnerName, { color: "#111111" }]}>
+									{result.pokemonName}
+								</Text>
 							</View>
 						)}
 
@@ -181,24 +237,45 @@ const ImageCaptureResult = ({
 				)}
 			</ScrollView>
 
-			<View style={styles.actionsRow}>
+			<View
+				style={[
+					styles.actionsRow,
+					{ backgroundColor: panelBg, borderColor: colors.border },
+				]}>
 				<TouchableOpacity
-					style={styles.secondaryButton}
+					style={[
+						styles.secondaryButton,
+						{ backgroundColor: secondaryButtonBg },
+					]}
 					onPress={onBackToPreview}>
-					<Ionicons name="arrow-back" size={20} color="#FFFFFF" />
-					<Text style={styles.secondaryButtonText}>Back</Text>
+					<Ionicons name="arrow-back" size={20} color={colors.text} />
+					<Text style={[styles.secondaryButtonText, { color: colors.text }]}>
+						Back
+					</Text>
 				</TouchableOpacity>
 
 				<TouchableOpacity
-					style={styles.primaryButton}
+					style={[
+						styles.primaryButton,
+						{
+							backgroundColor: colors.accent,
+							opacity: loading || detailsLoading || !result ? 0.6 : 1,
+						},
+					]}
 					onPress={handleOpenDetails}
 					disabled={loading || detailsLoading || !result}>
 					{detailsLoading ? (
-						<ActivityIndicator size="small" color="#001E3D" />
+						<ActivityIndicator size="small" color={colors.onAccent} />
 					) : (
-						<Ionicons name="information-circle" size={20} color="#001E3D" />
+						<Ionicons
+							name="information-circle"
+							size={20}
+							color={colors.onAccent}
+						/>
 					)}
-					<Text style={styles.primaryButtonText}>Details</Text>
+					<Text style={[styles.primaryButtonText, { color: colors.onAccent }]}>
+						Details
+					</Text>
 				</TouchableOpacity>
 			</View>
 		</SafeAreaView>
@@ -210,93 +287,90 @@ export default ImageCaptureResult;
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#0A0F16",
 	},
 	content: {
-		padding: 14,
-		paddingBottom: 120,
+		padding: 16,
+		paddingBottom: 128,
 		gap: 12,
 	},
 	imageWrapper: {
-		borderRadius: 18,
+		borderRadius: 20,
 		overflow: "hidden",
 		borderWidth: 1,
-		borderColor: "rgba(255,255,255,0.15)",
+		padding: 6,
 	},
 	imagePreview: {
 		width: "100%",
 		height: 260,
+		borderRadius: 14,
+	},
+	titleWrap: {
+		gap: 4,
 	},
 	title: {
 		fontSize: 22,
 		fontWeight: "800",
-		color: "#FFFFFF",
+	},
+	subtitle: {
+		fontSize: 13,
+		fontWeight: "500",
 	},
 	loadingBox: {
-		padding: 18,
+		padding: 16,
 		borderRadius: 14,
-		backgroundColor: "rgba(168,255,224,0.08)",
 		borderWidth: 1,
-		borderColor: "rgba(168,255,224,0.3)",
 		alignItems: "center",
 		gap: 10,
 	},
 	loadingText: {
-		color: "#D9FBEF",
 		fontSize: 14,
+		fontWeight: "500",
 	},
 	winnerCard: {
 		padding: 14,
 		borderRadius: 14,
-		backgroundColor: "#A8FFE0",
 	},
 	winnerLabel: {
 		fontSize: 12,
 		fontWeight: "700",
-		color: "#003026",
 	},
 	winnerName: {
 		fontSize: 22,
 		fontWeight: "800",
-		color: "#001E3D",
 	},
 	resultCard: {
 		padding: 14,
 		borderRadius: 14,
-		backgroundColor: "#121C2A",
 		borderWidth: 1,
-		borderColor: "rgba(255,255,255,0.12)",
 		gap: 6,
 	},
 	resultCardMuted: {
 		opacity: 0.75,
 	},
 	resultProvider: {
-		color: "#A8FFE0",
 		fontWeight: "700",
 	},
 	resultName: {
 		fontSize: 20,
 		fontWeight: "800",
-		color: "#FFFFFF",
 	},
 	resultConfidence: {
-		color: "#D2D9E4",
 		fontWeight: "600",
 	},
 	resultReasoning: {
-		color: "#B9C2CF",
 		lineHeight: 20,
 	},
 	errorText: {
-		color: "#FF9C9C",
 		fontWeight: "700",
 	},
 	actionsRow: {
 		position: "absolute",
-		left: 12,
-		right: 12,
-		bottom: 16,
+		left: 14,
+		right: 14,
+		bottom: 14,
+		padding: 10,
+		borderRadius: 16,
+		borderWidth: 1,
 		flexDirection: "row",
 		gap: 10,
 	},
@@ -304,28 +378,24 @@ const styles = StyleSheet.create({
 		flex: 1,
 		height: 52,
 		borderRadius: 14,
-		backgroundColor: "rgba(255,255,255,0.18)",
 		justifyContent: "center",
 		alignItems: "center",
 		flexDirection: "row",
 		gap: 8,
 	},
 	secondaryButtonText: {
-		color: "#FFFFFF",
 		fontWeight: "700",
 	},
 	primaryButton: {
 		flex: 1,
 		height: 52,
 		borderRadius: 14,
-		backgroundColor: "#A8FFE0",
 		justifyContent: "center",
 		alignItems: "center",
 		flexDirection: "row",
 		gap: 8,
 	},
 	primaryButtonText: {
-		color: "#001E3D",
 		fontWeight: "800",
 	},
 });

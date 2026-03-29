@@ -18,8 +18,9 @@ const CameraResult = ({
 }: CameraResultProps) => {
 	const { colors, theme } = useTheme();
 	const secondaryButtonBg =
-		theme === "dark" ? "rgba(239, 83, 80, 0.28)" : "rgba(239, 83, 80, 0.16)";
-	const primaryButtonBg = theme === "dark" ? "#8EF3CE" : "#6BE7BA";
+		theme === "dark" ? "rgba(255, 0, 0, 0.72)" : "rgba(255, 0, 0, 0.72)";
+	const primaryButtonBg = theme === "dark" ? "#1dca91" : "#22d245";
+	const primaryContentColor = colors.onAccent;
 
 	if (!photoUri) {
 		return (
@@ -53,7 +54,7 @@ const CameraResult = ({
 							{ backgroundColor: secondaryButtonBg },
 						]}
 						onPress={onRetake}>
-						<Ionicons name="refresh" size={50} color={colors.accentStrong} />
+						<Ionicons name="refresh" size={50} color={"#ffffff"} />
 					</TouchableOpacity>
 
 					<TouchableOpacity
@@ -62,7 +63,11 @@ const CameraResult = ({
 							{ backgroundColor: primaryButtonBg },
 						]}
 						onPress={onUsePhoto}>
-						<Ionicons name="checkmark-circle" size={50} color="#083A2E" />
+						<Ionicons
+							name="checkmark-circle"
+							size={50}
+							color={primaryContentColor}
+						/>
 					</TouchableOpacity>
 				</View>
 			</SafeAreaView>
