@@ -5,7 +5,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
 	ActivityIndicator,
 	Alert,
+	KeyboardAvoidingView,
+	Platform,
 	Pressable,
+	ScrollView,
 	StyleSheet,
 	Switch,
 	Text,
@@ -176,19 +179,27 @@ const Settings = () => {
 	return (
 		<SafeAreaView
 			style={[styles.safeArea, { backgroundColor: colors.background }]}>
-			<View style={[styles.headerRow, { borderBottomColor: colors.border }]}>
-				<Pressable onPress={() => router.back()} style={styles.backButton}>
-					<Text style={[styles.backText, { color: colors.text }]}>Back</Text>
-				</Pressable>
-				<Text style={[styles.title, { color: colors.text }]}>Settings</Text>
-				<View style={styles.backButton} />
-			</View>
+			<KeyboardAvoidingView
+				style={styles.flex}
+				behavior={Platform.OS === "ios" ? "padding" : "height"}
+				keyboardVerticalOffset={12}>
+				<View style={[styles.headerRow, { borderBottomColor: colors.border }]}> 
+					<Pressable onPress={() => router.back()} style={styles.backButton}>
+						<Text style={[styles.backText, { color: colors.text }]}>Back</Text>
+					</Pressable>
+					<Text style={[styles.title, { color: colors.text }]}>Settings</Text>
+					<View style={styles.backButton} />
+				</View>
 
-			<View
-				style={[
-					styles.card,
-					{ backgroundColor: colors.surface, borderColor: colors.border },
-				]}>
+				<ScrollView
+					contentContainerStyle={styles.scrollContent}
+					keyboardShouldPersistTaps="handled"
+					showsVerticalScrollIndicator={false}>
+					<View
+						style={[
+							styles.card,
+							{ backgroundColor: colors.surface, borderColor: colors.border },
+						]}>
 				<View style={styles.row}>
 					<View style={styles.rowTextWrap}>
 						<Text style={[styles.rowTitle, { color: colors.text }]}>
@@ -349,6 +360,8 @@ const Settings = () => {
 					)}
 				</Pressable>
 			</View>
+				</ScrollView>
+			</KeyboardAvoidingView>
 		</SafeAreaView>
 	);
 };
@@ -359,6 +372,12 @@ const styles = StyleSheet.create({
 	safeArea: {
 		flex: 1,
 		paddingHorizontal: 16,
+	},
+	flex: {
+		flex: 1,
+	},
+	scrollContent: {
+		paddingBottom: 28,
 	},
 	headerRow: {
 		flexDirection: "row",
