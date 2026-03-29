@@ -1,17 +1,13 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useState } from "react";
-import {
-	ActivityIndicator,
-	FlatList,
-	StyleSheet,
-	Text,
-	View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { LegendList } from "@legendapp/list";
 import PokeCard from "../../components/pokeCard";
 
 import SearchBar from "../../components/SearchBar";
 import { useRouter } from "expo-router";
 import { useTheme } from "@/src/context/ThemeContext";
+import { PokemonAPI } from "@/src/interface/PokeAPInterface";
 
 const Home = ({
 	pokemons,
@@ -51,17 +47,20 @@ const Home = ({
 				</Text>
 			</View>
 
-			{/* FlatList */}
-			<FlatList
-				data={filteredPokemons}
+			<LegendList
+				data={filteredPokemons as PokemonAPI[]}
 				key={rows}
-				keyExtractor={(item) => item.id.toString()}
+				keyExtractor={(item: PokemonAPI) => item.id.toString()}
 				contentContainerStyle={styles.listContent}
-				renderItem={({ item }) => <PokeCard pokemon={item} Rows={rows} />}
+				renderItem={({ item }: { item: PokemonAPI }) => (
+					<PokeCard pokemon={item} Rows={rows} />
+				)}
 				onEndReached={fetchMorePokemons}
 				numColumns={rows}
 				onEndReachedThreshold={0.4}
 				scrollIndicatorInsets={{ right: 1 }}
+				estimatedItemSize={100}
+				recycleItems
 				ListFooterComponent={
 					loadingMore ? (
 						<ActivityIndicator

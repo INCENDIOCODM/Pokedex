@@ -4,6 +4,8 @@ interface PokemonAPI {
 	name: string;
 	weight: number;
 	height: number;
+	base_experience: number;
+
 
 	sprites: {
 		front_default: string | null;
