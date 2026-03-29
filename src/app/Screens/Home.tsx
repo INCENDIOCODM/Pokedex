@@ -140,29 +140,6 @@ const Home = ({
 				onPressSettings={() => router.push("../Screens/Settings")}
 			/>
 
-			{/* Pokemon Count Badge */}
-			<View
-				style={[
-					styles.countContainer,
-					{ backgroundColor: colors.surface, borderBottomColor: colors.border },
-				]}>
-				<View style={styles.countLeftSection}>
-					<Ionicons name="sparkles-outline" size={14} color={colors.accent} />
-					<Text style={[styles.countText, { color: colors.mutedText }]}>
-						Pokédex Results
-					</Text>
-				</View>
-				<View
-					style={[
-						styles.countBadge,
-						{ backgroundColor: colors.surfaceAlt, borderColor: colors.border },
-					]}>
-					<Text style={[styles.countBadgeText, { color: colors.text }]}>
-						{filteredPokemons.length} Pokémon
-					</Text>
-				</View>
-			</View>
-
 			<LegendList
 				data={filteredPokemons as PokemonAPI[]}
 				key={rows}
@@ -247,34 +224,6 @@ export default Home;
 
 const styles = StyleSheet.create({
 	container: {},
-	countContainer: {
-		paddingHorizontal: 16,
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		flexDirection: "row",
-		alignItems: "center",
-		justifyContent: "space-between",
-	},
-	countLeftSection: {
-		flexDirection: "row",
-		alignItems: "center",
-		gap: 6,
-	},
-	countText: {
-		fontSize: 12,
-		fontWeight: "600",
-		letterSpacing: 0.5,
-	},
-	countBadge: {
-		paddingHorizontal: 10,
-		paddingVertical: 5,
-		borderRadius: 999,
-		borderWidth: 1,
-	},
-	countBadgeText: {
-		fontSize: 12,
-		fontWeight: "700",
-	},
 	listContent: {
 		paddingHorizontal: 10,
 		paddingTop: 10,
