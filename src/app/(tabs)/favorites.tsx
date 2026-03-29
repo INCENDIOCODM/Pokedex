@@ -45,7 +45,8 @@ const Favorites = () => {
 	);
 
 	return (
-		<SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+		<SafeAreaView
+			style={[styles.container, { backgroundColor: colors.background }]}>
 			{/* Count Badge */}
 			<View
 				style={[
@@ -93,7 +94,10 @@ const Favorites = () => {
 export default Favorites;
 
 const styles = StyleSheet.create({
-	container: {},
+	container: {
+		flex: 1,
+		marginBottom: "-5%",
+	},
 	countContainer: {
 		paddingHorizontal: 16,
 		paddingVertical: 8,
