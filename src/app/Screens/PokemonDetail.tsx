@@ -1,7 +1,14 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { Image } from "expo-image";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+	Pressable,
+	ScrollView,
+	StyleSheet,
+	Text,
+	View,
+	useWindowDimensions,
+} from "react-native";
 import typeColors from "../../components/Pokemontype/poketype";
 import SkeletonScreen from "./SkeletonScreen";
 import { PokemonAPI } from "@/src/interface/PokeAPInterface";
@@ -59,6 +66,14 @@ const chipPalette = [
 	"#26c6da",
 ];
 
+const QUICK_FACT_CARD_GAP = 10;
+
+const getQuickFactColumns = (screenWidth: number) => {
+	if (screenWidth >= 1024) return 4;
+	if (screenWidth >= 700) return 3;
+	return 2;
+};
+
 const getStatColor = (statName: string, fallback: string) =>
 	statColorMap[statName] ?? fallback;
 
@@ -94,11 +109,13 @@ export default function PokemonDetails() {
 	const { pokemonId } = useLocalSearchParams<{ pokemonId: string }>();
 	const router = useRouter();
 	const { colors, theme } = useTheme();
+	const { width: screenWidth } = useWindowDimensions();
 
 	const [loading, setLoading] = React.useState(true);
 	const [pokemon, setPokemon] = React.useState<PokemonAPI | null>(null);
 	const [isFavorite, setIsFavorite] = React.useState(false);
 	const [toggleLoading, setToggleLoading] = React.useState(false);
+	const [quickFactsWidth, setQuickFactsWidth] = React.useState(0);
 	const imageUri =
 		pokemon?.sprites?.other?.["official-artwork"]?.front_default ??
 		pokemon?.sprites?.front_default ??
@@ -185,6 +202,13 @@ export default function PokemonDetails() {
 		(ability) => ability.is_hidden,
 	);
 	const previewMoves = pokemon.moves.slice(0, 14);
+	const quickFactColumns = getQuickFactColumns(screenWidth);
+	const quickFactCardWidth =
+		quickFactsWidth > 0
+			? (quickFactsWidth - QUICK_FACT_CARD_GAP * (quickFactColumns - 1)) /
+				quickFactColumns
+			: undefined;
+	const quickFactCardDynamicStyle = { width: quickFactCardWidth };
 
 	return (
 		<ScrollView
@@ -276,7 +300,11 @@ export default function PokemonDetails() {
 					<Text style={[styles.sectionTitle, { color: colors.text }]}>
 						Overview
 					</Text>
-					<View style={styles.quickFactsGrid}>
+					<View
+						style={styles.quickFactsGrid}
+						onLayout={(event) =>
+							setQuickFactsWidth(event.nativeEvent.layout.width)
+						}>
 						<View
 							style={[
 								styles.factCard,
@@ -284,6 +312,7 @@ export default function PokemonDetails() {
 									backgroundColor: colors.surfaceAlt,
 									borderColor: colors.border,
 								},
+								quickFactCardDynamicStyle,
 							]}>
 							<Text style={[styles.factLabel, { color: colors.mutedText }]}>
 								HP
@@ -299,6 +328,7 @@ export default function PokemonDetails() {
 									backgroundColor: colors.surfaceAlt,
 									borderColor: colors.border,
 								},
+								quickFactCardDynamicStyle,
 							]}>
 							<Text style={[styles.factLabel, { color: colors.mutedText }]}>
 								Height
@@ -314,6 +344,7 @@ export default function PokemonDetails() {
 									backgroundColor: colors.surfaceAlt,
 									borderColor: colors.border,
 								},
+								quickFactCardDynamicStyle,
 							]}>
 							<Text style={[styles.factLabel, { color: colors.mutedText }]}>
 								Weight
@@ -329,6 +360,7 @@ export default function PokemonDetails() {
 									backgroundColor: colors.surfaceAlt,
 									borderColor: colors.border,
 								},
+								quickFactCardDynamicStyle,
 							]}>
 							<Text style={[styles.factLabel, { color: colors.mutedText }]}>
 								Base XP
@@ -591,7 +623,7 @@ const styles = StyleSheet.create({
 		flexDirection: "row",
 		flexWrap: "wrap",
 		justifyContent: "space-between",
-		gap: 10,
+		gap: QUICK_FACT_CARD_GAP,
 	},
 	factCard: {
 		width: "48.4%",
