@@ -1,6 +1,15 @@
-import React, { memo, useMemo, useContext } from "react";
+import React, { memo, useMemo, useContext, useEffect } from "react";
 import { Dimensions, ScrollView, StyleSheet, View } from "react-native";
-import { MotiView } from "moti";
+import Animated, {
+	cancelAnimation,
+	Easing,
+	useAnimatedStyle,
+	useSharedValue,
+	withDelay,
+	withRepeat,
+	withSequence,
+	withTiming,
+} from "react-native-reanimated";
 import {
 	SkeletonScreenProps,
 	SkeletonBlockProps,
@@ -16,17 +25,40 @@ const SkeletonBlock = memo(function SkeletonBlock({
 	delay = 0,
 	baseColor = "#E6E6E6",
 }: SkeletonBlockProps & { baseColor?: string }) {
+	const opacity = useSharedValue(0.45);
+
+	useEffect(() => {
+		opacity.value = withDelay(
+			delay,
+			withRepeat(
+				withSequence(
+					withTiming(1, {
+						duration: 750,
+						easing: Easing.inOut(Easing.ease),
+					}),
+					withTiming(0.45, {
+						duration: 750,
+						easing: Easing.inOut(Easing.ease),
+					}),
+				),
+				-1,
+				false,
+			),
+		);
+
+		return () => {
+			cancelAnimation(opacity);
+		};
+	}, [delay, opacity]);
+
+	const animatedStyle = useAnimatedStyle(() => {
+		return {
+			opacity: opacity.value,
+		};
+	});
+
 	return (
-		<MotiView
-			from={{ opacity: 0.45 }}
-			animate={{ opacity: 1 }}
-			transition={{
-				type: "timing",
-				duration: 750,
-				loop: true,
-				repeatReverse: true,
-				delay,
-			}}
+		<Animated.View
 			style={[
 				{
 					width,
@@ -34,6 +66,7 @@ const SkeletonBlock = memo(function SkeletonBlock({
 					borderRadius: radius,
 					backgroundColor: baseColor,
 				},
+				animatedStyle,
 				style,
 			]}
 		/>
