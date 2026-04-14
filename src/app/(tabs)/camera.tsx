@@ -125,15 +125,17 @@ export default function Camera() {
 						</Text>
 					</TouchableOpacity>
 				</View>
-				<CameraView
-					ref={cameraRef}
-					style={styles.camera}
-					facing={facing}
-					flash={flash}>
-					<View style={styles.frameContainer}>
+				<View style={styles.cameraContainer}>
+					<CameraView
+						ref={cameraRef}
+						style={styles.camera}
+						facing={facing}
+						flash={flash}
+					/>
+					<View pointerEvents="none" style={styles.frameContainer}>
 						<View style={styles.frame}>{showGrid && <Grid />}</View>
 					</View>
-				</CameraView>
+				</View>
 				<View style={styles.bottomPanel}>
 					<View style={styles.captureRow}>
 						<TouchableOpacity
@@ -184,6 +186,10 @@ const styles = StyleSheet.create({
 		fontSize: 16,
 		marginBottom: 12,
 	},
+	cameraContainer: {
+		flex: 1,
+		position: "relative",
+	},
 	camera: {
 		flex: 1,
 		borderRadius: 20,
@@ -219,7 +225,7 @@ const styles = StyleSheet.create({
 		fontWeight: "600",
 	},
 	frameContainer: {
-		flex: 1,
+		...StyleSheet.absoluteFillObject,
 		justifyContent: "center",
 		alignItems: "center",
 	},
