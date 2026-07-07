@@ -17,10 +17,10 @@ import {
 } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Grid from "@/src/components/Grid";
-import CameraResult from "../Screens/CameraResult";
-import ImageCaptureResult from "../Screens/ImageCaptureResult";
+import CameraResult from "./CameraResult";
+import ImageCaptureResult from "./ImageCaptureResult";
 
-export default function Camera() {
+export default function CameraScreen() {
 	const cameraRef = useRef<CameraView | null>(null);
 	const [facing, setFacing] = useState<CameraType>("back");
 	const [permission, requestPermission] = useCameraPermissions();

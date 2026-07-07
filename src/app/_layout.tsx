@@ -6,6 +6,7 @@ export default function RootLayout() {
 		<ThemeProvider>
 			<Stack screenOptions={{ headerShown: false }}>
 				<Stack.Screen name="(tabs)" />
+				<Stack.Screen name="camera" />
 				<Stack.Screen name="Screens/Settings" />
 				<Stack.Screen name="Screens/BattleSelection" />
 				<Stack.Screen name="Screens/BattleArena" />
