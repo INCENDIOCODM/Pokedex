@@ -178,7 +178,7 @@ export default function CameraScreen() {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: "#292828",
+		backgroundColor: "#1c2d38",
 	},
 	message: {
 		textAlign: "center",
@@ -225,18 +225,18 @@ const styles = StyleSheet.create({
 		fontWeight: "600",
 	},
 	frameContainer: {
-		...StyleSheet.absoluteFillObject,
+		...StyleSheet.absoluteFill,
 		justifyContent: "center",
 		alignItems: "center",
 	},
 	frame: {
 		position: "absolute",
-		borderWidth: 2,
+		borderWidth: 4,
 		borderColor: "rgba(255,255,255,0.8)",
 		borderRadius: 18,
 		overflow: "hidden",
-		width: "99%",
-		height: "99%",
+		width: "99.5%",
+		height: "99.5%",
 	},
 	bottomPanel: {
 		paddingTop: 20,
