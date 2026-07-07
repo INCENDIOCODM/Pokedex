@@ -1,7 +1,5 @@
 import { Pressable, View, StyleSheet } from "react-native";
-import { useLinkBuilder } from "@react-navigation/native";
 import { useRouter } from "expo-router";
-import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import Animated, {
@@ -12,12 +10,47 @@ import Animated, {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-const CustomNavbar: React.FC<BottomTabBarProps> = ({
+type TabBarRoute = {
+	key: string;
+	name: string;
+	params?: Record<string, unknown>;
+};
+
+type CustomNavbarProps = {
+	state: {
+		index: number;
+		routes: TabBarRoute[];
+	};
+	descriptors: Record<
+		string,
+		{
+			options: {
+				tabBarLabel?:
+					| string
+					| ((props: { focused: boolean; color: string }) => React.ReactNode);
+				title?: string;
+				tabBarAccessibilityLabel?: string;
+				tabBarButtonTestID?: string;
+			};
+		}
+	>;
+	navigation: {
+		emit: (event: {
+			type: string;
+			target: string;
+			canPreventDefault?: boolean;
+		}) => {
+			defaultPrevented: boolean;
+		};
+		navigate: (name: string, params?: Record<string, unknown>) => void;
+	};
+};
+
+const CustomNavbar = ({
 	state,
 	descriptors,
 	navigation,
-}) => {
-	const { buildHref } = useLinkBuilder();
+}: CustomNavbarProps) => {
 	const router = useRouter();
 
 	const PrimaryColor = "#000000ff";
@@ -59,8 +92,6 @@ const CustomNavbar: React.FC<BottomTabBarProps> = ({
 								.mass(0.5)
 								.damping(20)
 								.stiffness(90)}
-							// @ts-ignore
-							href={buildHref(route.name, route.params)}
 							accessibilityState={isFocused ? { selected: true } : {}}
 							accessibilityLabel={options.tabBarAccessibilityLabel}
 							testID={options.tabBarButtonTestID}
